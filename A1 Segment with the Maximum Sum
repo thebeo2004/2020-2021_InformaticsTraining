@@ -1,0 +1,113 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i ,a, b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll MAXN = 1e6;
+ 
+struct node
+{
+    ll pref; // the max prefix of segment
+    ll suf;  // the max suffix of segment
+    ll sum;  // the sum of segment
+    ll seg;  // the maximum of segment
+};
+ 
+node SegTree[MAXN];
+vector<ll> v;
+ 
+node operator + (node l , node r)
+{
+    node tmp;
+    tmp.sum = l.sum + r.sum;
+    tmp.seg = max(max(l.seg , r.seg) , l.suf + r.pref);
+    tmp.pref = max(l.pref , (l.sum + r.pref));
+    tmp.suf = max(r.suf , (r.sum + l.suf));
+    return tmp;
+}
+ 
+void ConstructTree(int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos].sum = v[low];
+        if (v[low] >= 0)
+        {
+            SegTree[pos].seg = v[low];
+            SegTree[pos].pref = v[low];
+            SegTree[pos].suf = v[low];
+        }
+        else
+        {
+            SegTree[pos].seg = 0;
+            SegTree[pos].pref = 0;
+            SegTree[pos].suf = 0;
+        }
+        return;
+    }
+ 
+    int mid = (low+high)/2;
+    ConstructTree(low , mid , pos*2 + 1);
+    ConstructTree(mid + 1, high , pos*2 + 2);
+    SegTree[pos] = SegTree[pos*2 + 1] + SegTree[pos*2 + 2];
+}
+ 
+void Update(int idx , int val , int low , int high , int pos)
+{
+    if (low == high)
+    {
+        v[low] = val;
+        SegTree[pos].sum = val;
+        if (v[low] >= 0)
+        {
+            SegTree[pos].seg = val;
+            SegTree[pos].pref = val;
+            SegTree[pos].suf = val;
+        }
+        else
+        {
+            SegTree[pos].seg = 0;
+            SegTree[pos].pref = 0;
+            SegTree[pos].suf = 0;
+        }
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx >= low && idx <= mid)
+    {
+        Update(idx , val , low , mid , pos*2 + 1);
+    }
+    else Update(idx , val , mid  + 1 , high , pos*2 + 2);
+    SegTree[pos] = SegTree[pos*2 + 1] + SegTree[pos*2 + 2];
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int n , m;
+    cin >> n >> m;
+    ff(i , 0 , n - 1)
+    {
+        ll x;
+        cin >> x;
+        v.push_back(x);
+    }
+ 
+    ConstructTree(0 , n - 1 , 0);
+    cout << SegTree[0].seg << endl;
+    while(m--)
+    {
+        int i , v;
+        cin >> i >> v;
+        Update(i , v , 0 , n - 1 , 0);
+        cout << SegTree[0].seg << endl;
+    }
+ 
+ 
+    return 0;
+}
