@@ -1,0 +1,82 @@
+//https://codeforces.com/edu/course/2/lesson/4/2/practice/status
+
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a ; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll MAXN = 1e6;
+ 
+vector<int> v;
+int SegTree[MAXN];
+ 
+void ConstructTree(int low , int high , int pos)
+{
+    if (low==high)
+    {
+        SegTree[pos] = v[low];
+        return;
+    }
+    int mid = (low+high)/2;
+    ConstructTree(low , mid , pos*2 + 1);
+    ConstructTree(mid + 1 , high , pos*2 + 2);
+    SegTree[pos] = SegTree[2*pos+1] + SegTree[2*pos + 2];
+}
+ 
+void Update(int idx ,int low , int high , int pos)
+{
+    if (low == high)
+    {
+        if (SegTree[pos] == 1) SegTree[pos] = 0;
+        else SegTree[pos] = 1;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx >= low && idx <= mid) Update(idx , low , mid , pos*2 + 1);
+    else Update(idx , mid + 1 , high , pos*2 + 2);
+    SegTree[pos] = SegTree[2*pos+1] + SegTree[2*pos + 2];
+}
+ 
+int th_Query(int idx , int low , int high , int pos)
+{
+    if (low == high) return low;
+    int mid = (low+high)/2;
+    if ((idx+1) > SegTree[2*pos+1])
+    {
+        th_Query(idx - SegTree[2*pos+1] , mid + 1 , high , 2*pos + 2);
+    }
+    else th_Query(idx , low , mid , 2*pos + 1);
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int n , m;
+    cin >> n >> m;
+    ff(i , 0 , n - 1)
+    {
+        int a;
+        cin >> a;
+        v.push_back(a);
+    }
+ 
+    ConstructTree(0 , n - 1 , 0);
+ 
+    while(m--)
+    {
+        int a , b;
+        cin >> a >> b;
+        if (a== 1) Update(b , 0 , n - 1 , 0);
+        else
+        {
+            cout << th_Query(b , 0 , n - 1 , 0) << endl;
+        }
+    }
+ 
+    return 0;
+}
