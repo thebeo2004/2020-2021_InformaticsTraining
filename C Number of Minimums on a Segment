@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll MAXN = 1e6;
+ 
+vector<ll> v;
+ 
+struct node
+{
+    ll value;
+    ll number;
+};
+ 
+node SegTree[MAXN];
+ 
+node operator + (node l , node r)
+{
+    node tmp;
+    if (l.value == r.value)
+    {
+        tmp.value = l.value;
+        tmp.number = l.number + r.number;
+    }
+    else if (l.value < r.value)
+    {
+        tmp.value= l.value;
+        tmp.number = l.number;
+    }
+    else
+    {
+        tmp.value = r.value;
+        tmp.number = r.number;
+    }
+    return tmp;
+}
+ 
+void ConstructTree(int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos].value = v[low];
+        SegTree[pos].number = 1;
+        return;
+    }
+    int mid = (low+high)/2;
+    ConstructTree(low , mid , pos*2 + 1);
+    ConstructTree(mid + 1, high , pos*2 + 2);
+    SegTree[pos] = SegTree[pos*2 + 1] + SegTree[pos*2+2];
+}
+ 
+void Update(int idx , int val , int low , int high , int pos)
+{
+    if (low == high)
+    {
+        v[idx] = val;
+        SegTree[pos].value = val;
+        SegTree[pos].number = 1;
+        return;
+    }
+ 
+    int mid = (low+high)/2;
+    if (idx >= low && idx <= mid)
+    {
+        Update(idx , val , low , mid , pos*2 + 1);
+    }
+    else Update(idx , val , mid + 1 , high , pos*2 + 2);
+    SegTree[pos] = SegTree[2*pos + 1] + SegTree[2*pos + 2];
+}
+ 
+node Minium_Query(int l , int r , int low , int high , int pos)
+{
+    if (l > high || low > r) return {INT_MAX , 0};
+    else if (low >= l && high <= r) return SegTree[pos];
+ 
+    int mid = (low+high)/2;
+ 
+    return (Minium_Query(l , r, low , mid , pos*2 + 1) + Minium_Query(l , r , mid  + 1 , high , pos*2 + 2));
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+ 
+    int n , m;
+    cin >> n >> m;
+    ff(i , 0 , n - 1)
+    {
+        ll x;
+        cin >> x;
+        v.push_back(x);
+    }
+ 
+    ConstructTree(0 , n - 1 , 0);
+ 
+    while(m--)
+    {
+        int a , b , c;
+        cin >> a >> b >> c;
+        if (a==1)
+        {
+            Update(b , c , 0 , n - 1 , 0);
+        }
+        else
+        {
+            node s = Minium_Query(b , c - 1 , 0 , n - 1 , 0);
+            cout << s.value << " " << s.number << endl;
+        }
+    }
+ 
+    return 0;
+}
