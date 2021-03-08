@@ -1,0 +1,87 @@
+//https://codeforces.com/edu/course/2/lesson/4/2/practice/contest/273278/problem/C
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+
+typedef long long ll;
+const ll MAXN = 1e6;
+
+vector<ll> v;
+ll SegTree[MAXN];
+
+void ConstructTree(int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos] = v[low];
+        return;
+    }
+    int mid = (low+high)/2;
+    ConstructTree(low , mid , pos*2 + 1);
+    ConstructTree(mid + 1 , high , pos*2 + 2);
+    SegTree[pos] = max(SegTree[2*pos+1] , SegTree[2*pos+2]);
+}
+
+void Update(int idx , ll val , int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos] = val;
+        v[idx] = val;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx >= low && idx <= mid) Update(idx , val , low , mid , pos*2 + 1);
+    else Update(idx , val , mid + 1 , high , pos*2 + 2);
+    SegTree[pos] = max(SegTree[2*pos+1] , SegTree[2*pos+2]);
+}
+
+int element_least(ll x , int low , int high , int pos)
+{
+    if (x > SegTree[pos]) return -1;
+    if (low == high) return low;
+    int mid = (low+high)/2;
+    if (SegTree[2*pos+1] >= x) element_least(x , low , mid , 2*pos+1);
+    else element_least(x , mid + 1 , high , 2*pos+2);
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+
+    int n , m;
+    cin >> n >> m;
+    ff(i , 0 , n - 1)
+    {
+        ll x;
+        cin >> x;
+        v.push_back(x);
+    }
+
+    ConstructTree(0 , n - 1 , 0);
+
+    while(m--)
+    {
+        int a;
+        cin >> a;
+        if (a==1)
+        {
+            int b , c;
+            cin >> b >> c;
+            Update(b , c, 0 , n - 1 , 0);
+        }
+        else
+        {
+            ll x;
+            cin >> x;
+            cout << element_least(x , 0 , n - 1 , 0) << endl;
+        }
+
+    }
+
+    return 0;
+}
