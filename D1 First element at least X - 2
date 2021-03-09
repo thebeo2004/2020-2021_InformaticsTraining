@@ -1,0 +1,96 @@
+// https://codeforces.com/edu/course/2/lesson/4/2/practice/contest/273278/problem/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll MAXN = 1e6;
+ 
+vector<ll> v;
+ll SegTree[MAXN];
+ 
+void ConstructTree(int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos] = v[low];
+        return;
+    }
+    int mid = (low+high)/2;
+    ConstructTree(low , mid , pos*2 + 1);
+    ConstructTree(mid + 1 , high , pos*2 + 2);
+    SegTree[pos] = max(SegTree[2*pos+1] , SegTree[2*pos+2]);
+}
+ 
+void Update(int idx , ll val , int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos] = val;
+        v[idx] = val;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx >= low && idx <= mid) Update(idx , val , low , mid , pos*2 + 1);
+    else Update(idx , val , mid + 1 , high , pos*2 + 2);
+    SegTree[pos] = max(SegTree[2*pos+1] , SegTree[2*pos+2]);
+}
+ 
+void element_least_x2(ll val ,int l , int r , int low , int high , int pos , int &x)
+{
+   if (high < l) return;
+   if (SegTree[pos] < val) return;
+ 
+   int mid = (low+high)/2;
+ 
+   if (low >= l && high <= r)
+   {
+       if (low==high)
+       {
+           x = low;
+           return;
+       }
+       if (SegTree[2*pos+1] >= val) element_least_x2(val , l , r, low , mid , 2*pos + 1 , x);
+       else element_least_x2(val , l , r, mid + 1 , high , 2*pos+2 , x);
+       return;
+   }
+ 
+   element_least_x2(val , l , r, mid + 1 , high , 2*pos + 2 , x);
+   element_least_x2(val , l , r, low , mid , 2*pos+ 1 , x);
+ 
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int n , m;
+    cin >> n >> m;
+    ff(i , 0 , n - 1)
+    {
+        ll x;
+        cin >> x;
+        v.push_back(x);
+    }
+ 
+    ConstructTree(0 , n - 1 , 0);
+ 
+    while(m--)
+    {
+       ll a, b , c;
+       cin >> a >> b >> c;
+       if (a==1) Update(b , c , 0 , n - 1 , 0);
+       else
+       {
+           int x = -1;
+           element_least_x2(b , c , n - 1 , 0 , n - 1 , 0 , x);
+           cout << x << endl;
+        }
+    }
+ 
+    return 0;
+}
