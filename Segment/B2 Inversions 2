@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+const int MAXN = 1e6;
+ 
+vector<int> SegTree(MAXN);
+ 
+void ConstructTree(int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos] = 1;
+        return;
+    }
+    int mid = (low+high)/2;
+    ConstructTree(low , mid , 2*pos + 1);
+    ConstructTree(mid + 1 , high , 2*pos + 2);
+    SegTree[pos] = SegTree[2*pos + 1] + SegTree[2*pos + 2];
+}
+ 
+void Update(int idx , int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos] = 0;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx <= mid) Update(idx , low , mid , 2*pos + 1);
+    else Update(idx , mid + 1 , high , 2*pos + 2);
+    SegTree[pos] = SegTree[2*pos + 1] + SegTree[2*pos + 2];
+}
+ 
+int k_th_Query(int idx , int low , int high , int pos)
+{
+    if (low == high)
+    {
+       return low;
+    }
+    int mid = (low+high)/2;
+    if (SegTree[2*pos+2] >= (idx+1)) k_th_Query(idx, mid + 1 , high , 2*pos+2);
+    else k_th_Query(idx-SegTree[2*pos+2] , low , mid , 2*pos+1);
+}
+ 
+ 
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int n;
+    cin >> n;
+    vector<int> v(n);
+    ff(i , 0 , n - 1) cin >> v[i];
+    stack<int> number;
+ 
+    ConstructTree(0 , n - 1 , 0);
+ 
+    REP(i , n  - 1 , 0)
+    {
+        int x = k_th_Query(v[i] , 0 , n - 1 , 0);
+        number.push(x+1);
+        Update(x , 0 , n - 1 , 0);
+    }
+ 
+    while(!number.empty())
+    {
+        cout << number.top() << " ";
+        number.pop();
+    }
+ 
+ 
+    return 0;
+}
