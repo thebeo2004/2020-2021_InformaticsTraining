@@ -1,0 +1,68 @@
+//https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i ,a , b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll MAXN = 1e6;
+ 
+struct OwO
+{
+    int value;
+    int left;
+    int right;
+};
+ 
+OwO number[MAXN];
+int SegTree[MAXN];
+ 
+void Update(int idx , int low , int high , int pos)
+{
+    if (low == high)
+    {
+        SegTree[pos] = 1;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx <= mid) Update(idx , low , mid , 2*pos + 1);
+    else Update(idx , mid + 1 , high , 2*pos+2);
+    SegTree[pos] = SegTree[2*pos+1] + SegTree[2*pos+2];
+}
+ 
+int number_query(int l , int r , int low , int high , int pos)
+{
+    if (high <= l || low >= r) return 0;
+    if (low > l && high < r) return SegTree[pos];
+    int mid = (low+high)/2;
+    return (number_query(l , r, low , mid , 2*pos + 1) +
+            number_query(l , r, mid + 1 , high , 2*pos + 2));
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    ff(i , 0 , 1e6 - 10) number[i].value = 0;
+    int n;
+    cin >> n;
+    vector<int> v(2*n) , occurences(n+5);
+    ff(i , 0 , 2*n - 1)
+    {
+        cin >> v[i];
+        number[v[i]].value++;
+        if (number[v[i]].value == 1) number[v[i]].left = i;
+        else if (number[v[i]].value == 2)
+        {
+            number[v[i]].right = i;
+            occurences[v[i]] = (i-number[v[i]].left - 1)-2*number_query(number[v[i]].left , i , 0 , 2*n - 1 , 0);
+            Update(number[v[i]].left , 0 , 2*n - 1 , 0);
+        }
+    }
+    ff(i , 1 , n) cout << occurences[i] << " ";
+ 
+    return 0;
+}
