@@ -1,0 +1,89 @@
+//https://codeforces.com/edu/course/2/lesson/4/4/practice/contest/274684/problem/A
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll MAXN = 1e6;
+ 
+ll SegTree[MAXN];
+vector<ll> v;
+ 
+void ConstructTree(int low , int high , int pos)
+{
+    if (low == high)
+    {
+        if (low%2==0) SegTree[pos] = v[low];
+        else SegTree[pos] = 0 - v[low];
+        return;
+    }
+    int mid = (low+high)/2;
+    ConstructTree(low , mid,2*pos+1);
+    ConstructTree(mid + 1 , high , 2*pos + 2);
+    SegTree[pos] = SegTree[2*pos+1] + SegTree[2*pos+2];
+}
+ 
+void Update(int idx , int low , int high , int pos,int val)
+{
+    if (low==high)
+    {
+        if (idx%2==0) SegTree[pos] = val;
+        else SegTree[pos] = 0 - val;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx <= mid) Update(idx , low , mid , 2*pos + 1 , val);
+    else Update(idx , mid + 1 , high , 2*pos + 2 , val);
+    SegTree[pos] = SegTree[2*pos+1] + SegTree[2*pos+2];
+}
+ 
+ll Sum_Query(int l , int r , int low , int high , int pos)
+{
+    if (low > r || high < l) return 0;
+    if (low >= l && high <= r) return SegTree[pos];
+    int mid = (low+high)/2;
+    return (Sum_Query(l , r, low , mid , 2*pos+1) +
+            Sum_Query(l , r, mid + 1 , high , 2*pos + 2));
+}
+ 
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int n;
+    cin >> n;
+    ff(i , 0 , n - 1)
+    {
+        ll x;
+        cin >> x;
+        v.push_back(x);
+    }
+    ConstructTree(0 , n - 1 , 0);
+ 
+    int m;
+    cin >> m;
+    while(m--)
+    {
+        int a , b , c;
+        cin >> a >> b >> c;
+        if (a==0)
+        {
+            b--;
+            Update(b , 0 , n - 1 , 0 , c);
+        }
+        else
+        {
+            b--;c--;
+            ll value = Sum_Query(b , c, 0 , n - 1 , 0);
+            if (b%2==1) value = 0 - value;
+            cout << value << endl;
+        }
+    }
+ 
+    return 0;
+}
