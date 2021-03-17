@@ -1,0 +1,64 @@
+//https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/E
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll MAXN = 1e6;
+ 
+ll SegTree[MAXN];
+ 
+void Update(int idx , int low , int high , int pos , int val)
+{
+    if (low == high)
+    {
+        SegTree[pos]+=val;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx <= mid) Update(idx , low , mid , 2*pos + 1 , val);
+    else Update(idx , mid + 1 , high , 2*pos + 2 , val);
+    SegTree[pos] = SegTree[2*pos+1] + SegTree[2*pos+2];
+}
+ 
+ll Sum_Query(int l , int r , int low , int high , int pos)
+{
+    if (high < l || low > r) return 0;
+    if (low >= l && high <= r) return SegTree[pos];
+    int mid = (low+high)/2;
+    return (Sum_Query(l , r, low , mid , 2*pos + 1) +
+            Sum_Query(l , r, mid + 1 , high , 2*pos + 2));
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int n , m;
+    cin >> n >> m;
+ 
+    while(m--)
+    {
+        int a;
+        cin >> a;
+        if (a==1)
+        {
+            int l , r, v;
+            cin >> l >> r >> v;
+            Update(l , 0 , n - 1 , 0 , v);
+            if (r <= (n-1)) Update(r, 0 , n - 1 , 0 , 0 - v);
+        }
+        else
+        {
+            int i;
+            cin >> i;
+            cout << Sum_Query(0 , i , 0 , n - 1 , 0) << endl;
+        }
+    }
+ 
+    return 0;
+}
