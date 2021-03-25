@@ -1,0 +1,91 @@
+//https://codeforces.com/edu/course/2/lesson/4/4/practice/contest/274684/problem/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+const int MAXN = 1e5 + 10;
+const int BLOCK_SIZE = 320;
+ 
+int cnt[MAXN/BLOCK_SIZE][45];
+vector<int> v;
+ 
+void Construct()
+{
+    ff(i , 0 , v.size() - 1) cnt[i/BLOCK_SIZE][v[i]]++;
+}
+ 
+void Update(int idx , int val)
+{
+    cnt[idx/BLOCK_SIZE][v[idx]]--;
+    cnt[idx/BLOCK_SIZE][val]++;
+    v[idx] = val;
+}
+ 
+int appear_number(int l , int r , int val)
+{
+    int x = 0;
+    ff(i , l , r) if (v[i] == val) x++;
+    return x;
+}
+ 
+int Query(int l , int r)
+{
+    int BLOCK_LEFT = (l+BLOCK_SIZE)/BLOCK_SIZE;//-1
+    int BLOCK_RIGHT =(r-BLOCK_SIZE)/BLOCK_SIZE;//+1
+ 
+    int total = 0;
+    if (BLOCK_RIGHT < BLOCK_LEFT)
+    {
+        ff(i , 1 , 40)
+        {
+            int sum = appear_number(l , r , i);
+            total+=min(1 , sum);
+        }
+        return total;
+    }
+ 
+    int lim_left = BLOCK_LEFT*BLOCK_SIZE - 1;
+    int lim_right = BLOCK_RIGHT*BLOCK_SIZE + 1;
+ 
+    ff(i , 1 , 40)
+    {
+        int sum = 0;
+        ff(j , BLOCK_LEFT , BLOCK_RIGHT) sum+=cnt[j][i];
+        sum+=appear_number(l , lim_left , i);
+        sum+=appear_number(lim_right , r , i);
+        total+=min(1, sum);
+    }
+    return total;
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int n , q;
+    cin >> n >> q;
+ 
+    ff(i , 0 , n - 1)
+    {
+        int x;
+        cin >> x;
+        v.push_back(x);
+    }
+ 
+    Construct();
+ 
+    while(q--)
+    {
+        int a, x , y;
+        cin >> a >> x >> y;
+        if (a==1) cout << Query(x - 1 , y - 1) << endl;
+        else Update(x - 1 , y);
+    }
+ 
+ 
+    return 0;
+}
