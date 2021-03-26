@@ -1,0 +1,86 @@
+//https://codeforces.com/contest/380/problem/C
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+const int MAXN = 1e6;
+ 
+string str;
+ 
+struct node
+{
+    int val;
+    int open;
+    int close;
+};
+ 
+node operator + (const node &l , const node &r)
+{
+    node tmp;
+    int x = min(l.open , r.close);
+    tmp.val = l.val + r.val + x*2;
+    tmp.open = l.open + r.open - x;
+    tmp.close = l.close + r.close - x;
+    return tmp;
+}
+ 
+node SegTree[5*MAXN];
+ 
+void Construct_Tree(int low , int high , int pos)
+{
+    if (low==high)
+    {
+        if (str[low] == '(')
+        {
+            SegTree[pos].open = 1;
+            SegTree[pos].close = 0;
+            SegTree[pos].val = 0;
+        }
+        else
+        {
+            SegTree[pos].open = 0;
+            SegTree[pos].close = 1;
+            SegTree[pos].val = 0;
+        }
+        return;
+    }
+    int mid = (low+high)/2;
+    Construct_Tree(low , mid , 2*pos + 1);
+    Construct_Tree(mid + 1 , high , 2*pos+2);
+    SegTree[pos] = SegTree[2*pos+1] + SegTree[2*pos+2];
+}
+ 
+node number_query(int l , int r , int low , int high , int pos)
+{
+    if (high < l || low > r) return {0 , 0 , 0};
+    if (low >= l && high <= r) return SegTree[pos];
+    int mid = (low+high)/2;
+    return(number_query(l , r, low , mid , 2*pos + 1) +
+           number_query(l , r, mid + 1 , high , 2*pos + 2));
+}
+ 
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    cin >> str;
+    Construct_Tree(0 , str.size() - 1 , 0);
+ 
+    int m;
+    cin >> m;
+    while(m--)
+    {
+        int l , r;
+        cin >> l >> r;
+        l--;r--;
+        cout << number_query(l , r , 0 , str.size() - 1 , 0).val << endl;
+    }
+ 
+ 
+    return 0;
+}
