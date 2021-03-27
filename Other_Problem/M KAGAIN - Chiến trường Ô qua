@@ -1,0 +1,69 @@
+//https://codeforces.com/group/FLVn1Sc504/contest/274496/problem/M
+#include <bits/stdc++.h>
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+vector<int> v;
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int T;
+    cin >> T;
+    while(T--)
+    {
+        int N;
+        cin >> N;
+        ff(i , 0 , N - 1)
+        {
+            int x;
+            cin >> x;
+            v.push_back(x);
+        }
+ 
+        stack<int> check;
+ 
+        vector<int> L(N) , R(N);
+        check.push(0);L[0] = 0;
+ 
+        ff(i , 1 , N - 1)
+        {
+            while((check.size() > 0) && v[check.top()] >= v[i]) check.pop();
+            if (check.size() == 0) L[i] = 0;
+            else L[i] = check.top() + 1;
+            check.push(i);
+        }
+ 
+        while(!check.empty()) check.pop();
+ 
+        check.push(N - 1);R[N - 1] = N - 1;
+ 
+        REP(i , N - 2 , 0)
+        {
+            while((check.size() > 0) && v[check.top()] >= v[i]) check.pop();
+            if (check.size() == 0) R[i] = N - 1;
+            else R[i] = check.top() - 1;
+            check.push(i);
+        }
+ 
+        int best = INT_MIN , posL , posR;
+ 
+        ff(i , 0 , N - 1)
+        {
+            int x = v[i]*(R[i]-L[i] + 1);
+            if (x > best)
+            {
+                best = x;
+                posL = L[i] + 1;
+                posR = R[i] + 1;
+            }
+        }
+        cout << best << " " << posL << " " << posR << endl;
+        v.clear();
+    }
+    return 0;
+}
