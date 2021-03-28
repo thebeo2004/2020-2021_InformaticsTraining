@@ -1,0 +1,68 @@
+//https://codeforces.com/group/FLVn1Sc504/contest/274518/problem/V
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+ 
+const int MAXN = 1e6;
+int arr[1010][1010];
+int H[1010][1010];
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+ 
+    int N , M;
+    cin >> M >> N;
+    ff(i , 0 , M - 1)
+    {
+        ff(j , 0 , N - 1)
+        {
+            cin >> arr[i][j];
+            if (arr[i][j] == 1)
+            {
+                if (i==0) H[i][j] = 1;
+                else H[i][j] = H[i-1][j] + 1;
+            }
+            else H[i][j] = 0;
+        }
+    }
+ 
+    int best = INT_MIN;
+ 
+    REP(i , M - 1 , 0)
+    {
+        int L[N] , R[N];
+        stack<int> check;
+        check.push(0);L[0] = 0;
+ 
+        ff(j , 1 , N - 1)
+        {
+            while(!check.empty() && H[i][check.top()] >= H[i][j]) check.pop();
+            if (check.empty()) L[j] = 0;
+            else L[j] = check.top()+1;
+            check.push(j);
+        }
+        while(!check.empty()) check.pop();
+        check.push(N - 1);R[N - 1] = N - 1;
+        REP(j , N -2 , 0)
+        {
+            while(!check.empty() && H[i][check.top()] >= H[i][j]) check.pop();
+            if (check.empty()) R[j] = N - 1;
+            else R[j] = check.top() - 1;
+            check.push(j);
+        }
+        ff(j , 0 , N - 1)
+        {
+            best = max(best , (R[j] - L[j]+1)*H[i][j]);
+        }
+    }
+ 
+    cout << best;
+ 
+ 
+    return 0;
+}
