@@ -1,0 +1,57 @@
+//https://codeforces.com/group/FLVn1Sc504/contest/274487/problem/S
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+typedef long long ll;
+
+char arr[1005][1005];
+ll H[1005][1005];
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+
+    int M , N;
+    cin >> M >> N;
+    ff(i , 0 , M - 1)
+    {
+        ff(j , 0 , N - 1)
+        {
+            cin >> arr[i][j];
+            if (arr[i][j] == '1')
+            {
+                if (i==0) H[i][j] = 1;
+                else H[i][j] = H[i-1][j] + 1;
+            }
+            else H[i][j] = 0;
+        }
+    }
+    ll ans = 0;
+    ff(i , 0 , M - 1)
+    {
+        vector<ll> L(N);
+        stack<ll> check;
+        ff(j , 0 , N - 1)
+        {
+            while(!check.empty() && H[i][check.top()] >= H[i][j]) check.pop();
+            if (check.empty()) L[j] = 0;
+            else L[j] = check.top() + 1;
+            check.push(j);
+        }
+        //F[j] = F[L[j] - 1] + (j - L[j]+1]*H[i][j]
+        vector<int> F(N);
+        ff(j , 0 , N - 1)
+        {
+            if (L[j] == 0) F[j] = (j-L[j]+1)*H[i][j];
+            else F[j] = F[L[j] - 1] + (j-L[j]+1)*H[i][j];
+            ans+=F[j];
+        }
+    }
+    cout << ans;
+
+    return 0;
+}
