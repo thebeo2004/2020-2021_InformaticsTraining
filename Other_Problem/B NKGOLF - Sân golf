@@ -1,0 +1,103 @@
+//https://codeforces.com/group/FLVn1Sc504/contest/274824/problem/B
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+typedef long long ll;
+ll arr[1005][1005] , comb[1005][1005];
+int H[1005][1005];
+ 
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int best  = 0;
+    int M , N;
+    cin >> M >> N;
+    ff(i , 0 , M - 1)
+    {
+        int x = 1;
+        ff(j , 0 , N - 1)
+        {
+            cin >> arr[i][j];
+            if (j > 0)
+            {
+                if (arr[i][j]>=arr[i][j-1]) x++;
+                else
+                {
+                    best = max(best , x);
+                    x = 1;
+                }
+            }
+        }
+        best = max(best , x);
+    }
+    ff(j , 0 , N - 1)
+    {
+        int x = 1;
+        ff(i , 0 , M - 1)
+        {
+            if (i > 0)
+            {
+                if (arr[i][j]>=arr[i-1][j]) x++;
+                else
+                {
+                    best = max(best , x);
+                    x = 1;
+                }
+            }
+        }
+        best = max(best , x);
+    }
+ 
+    ff(i , 1 , M - 1)
+    {
+        ff(j , 1 , N - 1)
+        {
+            if ((arr[i][j] >= arr[i-1][j]) && (arr[i][j] >= arr[i][j-1]) && (arr[i][j-1] >= arr[i-1][j-1]) && (arr[i-1][j]>=arr[i-1][j-1]))
+            {
+                 comb[i-1][j-1] = 1;
+            }
+            else comb[i-1][j-1] = 0;
+        }
+    }
+    ff(i , 0 , M - 2)
+    {
+        ff(j , 0 , N - 2)
+        {
+            if (comb[i][j] == 1)
+            {
+                if (i==0) H[i][j] = 1;
+                else H[i][j] = H[i-1][j] + 1;
+            }
+            else H[i][j] = 0;
+        }
+        stack<int> check;
+        vector<int> L(N) , R(N);
+        ff(j , 0 , N - 2)
+        {
+            while(!check.empty() && H[i][check.top()] >= H[i][j]) check.pop();
+            if (check.empty()) L[j] = 0;
+            else L[j] = check.top() + 1;
+            check.push(j);
+        }
+        while(!check.empty()) check.pop();
+        REP(j , N - 2 , 0)
+        {
+            while(!check.empty() && H[i][check.top()] >= H[i][j]) check.pop();
+            if (check.empty()) R[j] = N - 2;
+            else R[j] = check.top() - 1;
+            check.push(j);
+        }
+        ff(j , 0 , N - 2)
+        {
+            if (comb[i][j] == 1) best = max(best , (R[j] - L[j]+2)*(H[i][j] + 1));
+        }
+    }
+    
+    cout << best;
+ 
+    return 0;
+}
