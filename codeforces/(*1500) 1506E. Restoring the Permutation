@@ -1,0 +1,60 @@
+//https://codeforces.com/problemset/problem/1506/E
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ff(i , a, b) for(int i = a; i <= b; i++)
+#define REP(i , a, b) for (int i = a; i >= b; i--)
+typedef long long ll;
+const ll MAXN = 1e6;
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while(t--)
+    {
+        int n;
+        cin >> n;
+        vector<int> q(n + 2) , Min(n + 2) , Max(n + 2) , v;
+        ff(i , 1 , n)
+        {
+            cin >> q[i];
+            if (q[i]!=q[i-1])
+            {
+                Max[i] = q[i];Min[i] = q[i];
+                v.push_back(q[i]);
+            }
+            else Max[i] = -1 , Min[i] = -1;
+        }
+        queue<int> check;
+        ff(i , 1 , n)
+        {
+            if(!binary_search(v.begin() , v.end() , i)) check.push(i);
+        }
+        ff(i , 1 , n)
+        {
+            if (Min[i] == -1) Min[i] = check.front() , check.pop();
+            cout << Min[i] << " ";
+        }
+        cout << endl;
+        stack<int> D;
+        int x = 0;
+        ff(i , 1 , n)
+        {
+            if (Max[i] != -1)
+            {
+                ff(j, x + 1 , Max[i] - 1) D.push(j);
+                x = Max[i];
+            }
+            else Max[i] = D.top(), D.pop();
+        }
+        ff(i , 1 , n) cout << Max[i] << " ";
+        cout << endl;
+    }
+
+    return 0;
+}
