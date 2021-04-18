@@ -1,0 +1,47 @@
+//https://ucode.vn/problems/hotel-44771/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i ,a ,b) for(int i = a; i >= int(b); i--)
+
+struct node
+{
+    int l;
+    int r;
+};
+
+node v[100006];
+vector<int> arr(1000006 , 0);
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+
+    int N;
+    cin >> N;
+    vector<int> num;
+    ff(i , 0 , N - 1)
+    {
+        cin >> v[i].l >> v[i].r;
+        num.push_back(v[i].l);
+        num.push_back(v[i].r);
+    }
+    sort(num.begin() , num.end());
+    ff(i , 0 , N - 1)
+    {
+        arr[lower_bound(num.begin() , num.end() , v[i].l) - num.begin()]++;
+        arr[lower_bound(num.begin() , num.end() , v[i].r) - num.begin()]--;
+    }
+    int best = 0 , sum = 0;
+    ff(i , 0 , 2*N)
+    {
+        sum = max(sum + arr[i], arr[i]);
+        best = max(best , sum);
+    }
+    cout << best;
+
+    return 0;
+}
