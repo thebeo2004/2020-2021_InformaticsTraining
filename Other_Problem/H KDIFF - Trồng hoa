@@ -20,8 +20,8 @@ int main()
     int l = 1;
     ff(i , 1 , N)
     {
-        while(!Max.empty() && Max.back() <= v[i]) Max.pop_back();
-        while(!Min.empty() && Min.back() >= v[i]) Min.pop_back();
+        while(!Max.empty() && Max.back() < v[i]) Max.pop_back();
+        while(!Min.empty() && Min.back() > v[i]) Min.pop_back();
         Max.push_back(v[i]);
         Min.push_back(v[i]);
         while(Max.front() - Min.front() > K)
