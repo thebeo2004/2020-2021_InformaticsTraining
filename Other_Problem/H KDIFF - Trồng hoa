@@ -1,0 +1,45 @@
+//https://codeforces.com/group/FLVn1Sc504/contest/274816/problem/H
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i , a, b) for(int i = a; i >= int(b); i--)
+typedef long long ll;
+const ll MAXN = 1e6;
+int arr[MAXN];
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    int N, K;
+    cin >> N >> K;
+    vector<int> v(N+1);
+    ff(i , 1 , N) cin >> v[i];
+    deque<int> Max , Min;
+    int l = 1;
+    ff(i , 1 , N)
+    {
+        while(!Max.empty() && Max.back() <= v[i]) Max.pop_back();
+        while(!Min.empty() && Min.back() >= v[i]) Min.pop_back();
+        Max.push_back(v[i]);
+        Min.push_back(v[i]);
+        while(Max.front() - Min.front() > K)
+        {
+            if(v[l] == Max.front()) Max.pop_front();
+            if(v[l] == Min.front()) Min.pop_front();
+            l++;
+        }
+        arr[i] = l;
+    }
+    int ans = 0;
+    arr[0] = 0;
+    ff(i , 1 , N)
+    {
+        ans = max(ans , arr[arr[i] - 1] + i - arr[i] + 1);
+        arr[i] = max(arr[i-1] , i - arr[i] + 1);
+    }
+    cout << ans;
+ 
+    return 0;
+}
