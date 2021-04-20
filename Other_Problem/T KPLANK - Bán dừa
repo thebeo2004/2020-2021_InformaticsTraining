@@ -1,0 +1,52 @@
+//https://codeforces.com/group/FLVn1Sc504/contest/274816/problem/T
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= b; i++)
+#define REP(i , a, b) for(int i = a; i >= b; i--)
+typedef long long ll;
+const ll MAXN = 1e6;
+ll L[MAXN] , R[MAXN];
+ 
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    ll N;
+    cin >> N;
+    vector<ll> v(N+1);
+    ff(i , 1 , N) cin >> v[i];
+    stack<ll> check;
+    ff(i , 1 , N)
+    {
+        while(!check.empty() && v[check.top()] >= v[i]) check.pop();
+        if(check.size() == 0) L[i] = 1;
+        else L[i] = check.top() + 1;
+        check.push(i);
+    }
+    while(!check.empty()) check.pop();
+    REP(j , N , 1)
+    {
+        while(!check.empty() && v[check.top()] >= v[j]) check.pop();
+        if(check.size() == 0) R[j] = N;
+        else R[j] = check.top() - 1;
+        check.push(j);
+    }
+    ll best = 0 , ans = 0;
+    ff(i , 1 , N)
+    {
+        ll lenth = R[i] - L[i] + 1;
+        if (lenth >= v[i])
+        {
+            if ((v[i]*v[i]) > best)
+            {
+                best = v[i]*v[i];
+                ans = v[i];
+            }
+            else if (best == (v[i]*v[i])) ans = max(ans , v[i]);
+        }
+    }
+    cout << ans;
+ 
+    return 0;
+}
