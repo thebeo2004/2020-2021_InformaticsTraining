@@ -1,0 +1,32 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= b; i++)
+#define REP(i , a, b) for(int i = a; i >= b; i--)
+typedef long long ll;
+
+
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+
+    int A , B;
+    cin >> A >> B;
+    vector<int> Is_prime(B - A + 1 , true);
+
+    for (ll i = 2; i*i <= B; i++)
+    {
+        for (ll j = max(i*i , (A+i-1)/i*i) ; j <= B; j+=i)
+        {
+            Is_prime[j-A] = false;
+        }
+    }
+    if (A <= 1) Is_prime[1-A] = false;
+    ff(i , A , B) if (Is_prime[i-A]) cout << i << endl;
+
+
+    return 0;
+}
+
