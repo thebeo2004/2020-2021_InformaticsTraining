@@ -1,0 +1,34 @@
+//https://oj.vnoi.info/problem/qbmax
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i , a, b) for(int i = a; i >= int(b); i--)
+typedef long long ll;
+const ll MAXN = 1e6 + 5;
+int arr[110][110];
+int F[110][110];
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int N , M;
+    cin >> M >> N;
+    ff(i , 1 , M)
+    {
+        ff(j , 1 , N) cin >> arr[i][j];
+        F[i][1] = arr[i][1];
+    }
+
+    ff(j , 2 , N)
+    {
+        F[1][j] = max(F[1][j-1] , F[2][j-1]) + arr[1][j];
+        F[M][j] = max(F[M][j-1] , F[M-1][j-1]) + arr[M][j];
+        ff(i , 2 , M - 1) F[i][j] = max({F[i][j-1] , F[i+1][j-1] , F[i-1][j-1]}) + arr[i][j];
+    }
+    int best = INT_MIN;
+    ff(i , 1 , M) best = max(best , F[i][N]);
+    cout << best;
+
+    return 0;
+}
