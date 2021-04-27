@@ -1,0 +1,60 @@
+//https://oj.vnoi.info/problem/nkpalin
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for (int i = a; i <= int(b);i++)
+#define REP(i , a , b) for(int i = a; i >= int(b);i--)
+typedef long long int ll;
+const ll MAXN = 1e6+ 7;
+int arr[2010][2010];
+void trace(int l , int r , string s , int best)
+{
+    if(l > r) return;
+    if(s[l] == s[r])
+    {
+        if (l < r)
+        {
+            cout << s[l];
+            trace(l + 1 , r - 1 ,s , best - 2);
+            cout << s[l];
+        }
+        else
+        {
+            cout << s[l];
+            return;
+        }
+    }
+    else
+    {
+        if(arr[l+1][r] == best) trace(l+1 , r , s , best);
+        else trace(l , r - 1 , s , best);
+    }
+
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    string s;
+    cin >> s;
+    int len = s.size() , best = 0;
+    ff(i , 0 , len - 1) arr[i][i] = 1 , best = max(best , arr[i][i]);
+    REP(i , len - 1 , 0)
+    {
+        ff(j , i + 1 , len - 1)
+        {
+            if(s[i]==s[j])
+            {
+                if (j == (i + 1)) arr[i][j]++;
+                else arr[i][j] = arr[i+1][j-1] + 2;
+            }
+            else arr[i][j] = max(arr[i+1][j] , arr[i][j-1]);
+            best = max(best , arr[i][j]);
+        }
+    }
+
+    trace(0 , len - 1, s , best);
+
+
+  return 0;
+}
