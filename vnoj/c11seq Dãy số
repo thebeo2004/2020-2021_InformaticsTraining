@@ -1,0 +1,60 @@
+//https://oj.vnoi.info/problem/c11seq
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a , b) for(int i = a; i <= b; i++)
+#define REP(i , a, b) for(int i = a; i >= b; i--)
+typedef long long ll;
+const ll MAXN = 4e6 + 7;
+int Segtree[MAXN];
+void Update(int idx , int low , int high , int pos , int value)
+{
+    if(low == high)
+    {
+        Segtree[pos] += value;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx <= mid) Update(idx , low , mid , 2*pos+1 , value);
+    else Update(idx , mid + 1 , high , 2*pos+2 , value);
+    Segtree[pos] = Segtree[2*pos+1] + Segtree[2*pos+2];
+}
+int Sum_Query(int l , int r , int low , int high , int pos)
+{
+    if(low > r || high < l) return 0;
+    if(low >= l && high <= r) return Segtree[pos];
+    int mid = (low+high)/2;
+    return(Sum_Query(l , r , low , mid , 2*pos + 1) +
+           Sum_Query(l , r , mid + 1 , high , 2*pos + 2));
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int N , L , R;
+    cin >> N >> L >> R;
+    vector<ll> v(N+1) , check;
+    v[0] = 0;
+    check.push_back(0);
+    check.push_back(L);
+    check.push_back(R);
+    ff(i , 1 , N)
+    {
+        cin >> v[i];
+        v[i] = v[i-1] + v[i];
+        check.push_back(v[i]);
+        check.push_back(v[i] + L);
+        check.push_back(v[i] + R);
+    }
+    sort(check.begin(), check.end());
+    ll len = check.size() , ans = 0;
+    ff(i , 0 , N)
+    {
+        ans += Sum_Query(0 , lower_bound(check.begin() , check.end() , v[i]) - check.begin() , 0 , len , 0);
+        Update(lower_bound(check.begin() , check.end() , v[i]+L) - check.begin() , 0 , len , 0 , 1);
+        Update(lower_bound(check.begin() , check.end() , v[i]+R) - check.begin() + 1 , 0 , len , 0 , -1);
+    }
+    cout << ans;
+    return 0;
+}
