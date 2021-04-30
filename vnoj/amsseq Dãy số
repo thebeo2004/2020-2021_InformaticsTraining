@@ -1,0 +1,35 @@
+//https://oj.vnoi.info/problem/amsseq
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a , b) for(int i = a; i <= b; i++)
+#define REP(i , a, b) for(int i = a; i >= b; i--)
+typedef long long ll;
+const ll MAXN = 1e6 + 5;
+int F[MAXN];
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int N , K;
+    cin >> N >> K;
+    vector<int> v(N+1);
+    v[0] = 0;
+    ff(i , 1 , N) cin >> v[i];
+    int best = 0;
+    deque<int> D;
+    D.push_back(0);
+    ff(i , 1 , N)
+    {
+        if((i - K) >= 0) while(!D.empty() && D.front() < (i - K)) D.pop_front();
+        if(D.empty()) F[i] = v[i];
+        else F[i] = F[D.front()] + v[i];
+        while(!D.empty() && F[D.back()] <= F[i]) D.pop_back();
+        D.push_back(i);
+        best = max(best , F[i]);
+    }
+    cout << best;
+
+    return 0;
+}
