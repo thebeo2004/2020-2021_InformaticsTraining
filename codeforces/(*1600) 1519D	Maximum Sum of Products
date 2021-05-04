@@ -1,0 +1,38 @@
+//https://codeforces.com/problemset/problem/1519/D
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i , a, b) for(int i = a; i >= int(b); i--)
+typedef long long int ll;
+const ll MAXN = 1e6 + 7;
+ll F[5010][5010];
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    int N;
+    cin >> N;
+    vector<ll> a(N+1) , b(N+1) , total(N+1);
+    ff(i , 1 , N) cin >> a[i];
+    ff(i , 1 , N)
+    {
+        cin >> b[i];
+        total[i] = total[i-1] + a[i]*b[i];
+    }
+    ll ans = total[N];
+    REP(i , N , 1)
+    {
+        ff(j , i , N)
+        {
+            if(j == i) F[i][j] = a[i]*b[i];
+            else if(j == (i+1)) F[i][j] = a[i]*b[j] + a[j]*b[i];
+            else F[i][j] = F[i+1][j-1] + a[i]*b[j] + a[j]*b[i];
+            ans = max(ans , total[i-1] + F[i][j] + total[N] - total[j]);
+        }
+    }
+    cout << ans;
+    return 0;
+}
