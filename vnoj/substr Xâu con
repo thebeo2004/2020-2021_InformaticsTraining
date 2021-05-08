@@ -1,0 +1,40 @@
+//https://oj.vnoi.info/problem/substr
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a , b) for(long long i = a; i <= int(b); i++)
+#define REP(i , a, b) for(long i = a; i >= int(b); i--)
+typedef long long ll;
+const int MAXN = 1e3 + 7;
+const ll base = 311;
+const ll mod = 1e9 + 7;
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(nullptr);cout.tie(nullptr);
+    string A , B;
+    cin >> A >> B;
+    int len_A = A.size() , len_B = B.size();
+    if(len_B <= len_A)
+    {
+        ll hash_A = 0 , hash_B = 0;
+        ll val = 1;
+        ff(i , 1 , len_B) val = (val*base)%mod;
+        ff(i , 0 , len_B - 1)
+        {
+            hash_A = (hash_A*base + A[i])%mod;
+            hash_B = (hash_B*base + B[i])%mod;
+        }
+        if(hash_A == hash_B) cout << 1 << " ";
+        ff(i , 1 , len_A - len_B)
+        {
+            hash_A = (hash_A*base - A[i-1]*val + A[i+len_B - 1])%mod;
+            if (hash_A < 0) hash_A += mod;
+            if(hash_A == hash_B) cout << i + 1 << " ";
+        }
+    }
+
+
+    return 0;
+}
