@@ -1,0 +1,28 @@
+//https://oj.vnoi.info/problem/linegame
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a , b) for(long long i = a; i <= int(b); i++)
+#define REP(i , a, b) for(long i = a; i >= int(b); i--)
+typedef long long ll;
+const int MAXN = 1e5 + 7;
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int N;
+    cin >> N;
+    ll cycle = 0 , half_cycle = 0;
+    ff(i , 1 , N)
+    {
+        ll x;
+        cin >> x;
+        ll a = cycle , b = half_cycle;
+        cycle = max(a , b - x);
+        half_cycle = cycle + x;
+    }
+    cout << max(cycle , half_cycle);
+
+    return 0;
+}
