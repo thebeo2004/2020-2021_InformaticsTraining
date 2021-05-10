@@ -1,0 +1,21 @@
+//https://oj.vnoi.info/problem/c11id
+#include <bits/stdc++.h>
+using namespace std;
+#define ff(i , a , b) for(int i = a; i <= int(b); i++)
+typedef long long ll;
+const ll MAXN = 1e6 + 7;
+const ll mod = 1e9 + 7;
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int N;
+    cin >> N;
+    vector<int> v(N);
+    ff(i , 0 , N - 1) cin >> v[i];
+    sort(v.begin() , v.end());
+    ll ans = 1;
+    ff(i , 0 , v.size() - 1) ans = (ans*((v[i] - i)%mod))%mod;
+    cout << ans;
+    return 0;
+}
