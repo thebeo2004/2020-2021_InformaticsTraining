@@ -1,0 +1,85 @@
+//https://oj.vnoi.info/problem/qmax
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a , b) for(long long i = a; i <= int(b); i++)
+#define REP(i , a, b) for(long i = a; i >= int(b); i--)
+typedef long long ll;
+const int MAXN = 4e5 + 7;
+ll Segtree[MAXN] , node[MAXN];
+
+void Update(int idx , int low , int high , int pos , int val)
+{
+    if (low == high)
+    {
+        Segtree[pos] +=val;
+        return;
+    }
+    int mid = (low + high)/2;
+    if (idx <= mid) Update(idx , low , mid , 2*pos+1 , val);
+    else Update(idx , mid + 1, high , 2*pos+2, val);
+    Segtree[pos] = Segtree[2*pos+1] + Segtree[2*pos+2];
+}
+ll element_query(int l , int r , int low , int high , int pos)
+{
+    if (low > r || high < l) return 0;
+    if (low >= l && high <= r) return Segtree[pos];
+    int mid = (low+high)/2;
+    return (element_query(l , r , low , mid , 2*pos+1) +
+            element_query(l , r, mid + 1 , high , 2*pos+2));
+
+}
+void Update_New_Tree(int idx , int low , int high , int pos , int val)
+{
+    if (low == high)
+    {
+        node[pos] = val;
+        return;
+    }
+    int mid = (low+high)/2;
+    if (idx <= mid) Update_New_Tree(idx , low , mid , 2*pos+1 , val);
+    else Update_New_Tree(idx , mid + 1 , high , 2*pos+2 , val);
+    node[pos] = max(node[pos*2+1] , node[pos*2+2]);
+}
+ll max_query(int l , int r , int low , int high , int pos)
+{
+    if(low > r || high < l) return INT_MIN;
+    if(low >= l && high <= r) return node[pos];
+    int mid = (low+high)/2;
+    return max(max_query(l , r , low , mid , 2*pos+1 ) , max_query(l , r , mid + 1 , high , 2*pos+2));
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int N , M;
+    cin >> N >> M;
+    while(M--)
+    {
+        int u , v;
+        cin >> u >> v;
+        ll k;
+        cin >> k;
+        u--;v--;
+        Update(u , 0 , N, 0 , k);
+        Update(v+1 , 0 , N, 0 , 0 - k);
+    }
+
+    ff(i , 0 , N - 1)
+    {
+        ll val = element_query(0 , i , 0 , N, 0);
+        Update_New_Tree(i , 0 , N , 0 , val);
+    }
+    int p;
+    cin >> p;
+    while(p--)
+    {
+        int u , v;
+        cin >> u >> v;
+        u--;v--;
+        cout << max_query(u , v , 0 , N , 0) << endl;
+    }
+
+    return 0;
+}
