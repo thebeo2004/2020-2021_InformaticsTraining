@@ -1,0 +1,73 @@
+//https://oj.vnoi.info/problem/lites
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i, a, b) for(int i = a; i <= int(b); i++)
+#define REP(i , a, b) for(int i = a; i >= int(b); i--)
+typedef long long ll;
+const ll MAXN = 2e5 + 7;
+struct OwO
+{
+    int number;
+    int val;
+    int lazy;
+};
+OwO SegTree[MAXN];
+void downto(int pos , int l , int r)
+{
+    int mid = (l+r)/2 , x = SegTree[pos].lazy;
+    SegTree[pos].lazy = 0;
+
+    SegTree[2*pos + 1].lazy += x;
+    int val = SegTree[2*pos +1].val + x;
+    if (val % 2 == 1) SegTree[2*pos +1].number = (mid - l + 1) - SegTree[2*pos + 1].number;
+    SegTree[2*pos + 1].val = 0;
+
+    SegTree[2*pos + 2].lazy += x;
+    val = SegTree[2*pos +2].val + x;
+    if (val % 2 == 1) SegTree[2*pos +2].number = (r - (mid + 1) + 1) - SegTree[2*pos + 2].number;
+    SegTree[2*pos + 2].val = 0;
+}
+void Update(int l , int r , int low , int high , int pos)
+{
+    if (high < l || low > r ) return;
+    if (low >= l && high <= r)
+    {
+        SegTree[pos].lazy++;
+        int val = SegTree[pos].val + 1;
+        if (val%2 == 1) SegTree[pos].number = (high - low + 1) - SegTree[pos].number;
+        SegTree[pos].val = 0;
+        return;
+    }
+    downto(pos , low , high);
+    int mid = (low + high)/2;
+    Update(l , r , low , mid , 2*pos + 1);
+    Update(l , r , mid + 1 , high , 2*pos + 2);
+    SegTree[pos].number = SegTree[2*pos +1].number + SegTree[2*pos +2].number;
+}
+
+int Query(int l , int r , int low , int high ,int pos)
+{
+    if (low > r || high < l) return 0;
+    if (low >= l && high <= r) return SegTree[pos].number;
+    downto(pos , low , high);
+    int mid = (low+high)/2;
+    return(Query(l , r , low , mid , 2*pos + 1) +
+           Query(l , r , mid + 1 , high , 2*pos + 2));
+}
+
+int main()
+{
+    //ios_base::sync_with_stdio(false);
+    //cin.tie(nullptr);cout.tie(nullptr);
+    int N , M;
+    scanf("%d%d", &N , &M);
+    while(M--)
+    {
+        int x , l , r;
+        scanf("%d%d%d", &x , &l , &r);
+        if (x==0) Update(l - 1, r - 1, 0 , N , 0);
+        else printf("%d\n",Query(l - 1 , r - 1 , 0 , N , 0));
+    }
+    return 0;
+}
