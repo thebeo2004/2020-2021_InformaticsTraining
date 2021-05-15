@@ -1,0 +1,71 @@
+//https://oj.vnoi.info/problem/gss
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i, a, b) for(int i = a; i <= int(b); i++)
+#define REP(i , a, b) for(int i = a; i >= int(b); i--)
+typedef long long ll;
+const ll MAXN = 2e5 + 7;
+struct OwO
+{
+    ll sum;
+    ll opt;
+    ll prefix;
+    ll suffix;
+};
+OwO SegTree[MAXN];
+OwO operator + (const OwO &l , const OwO &r)
+{
+    OwO tmp;
+    tmp.sum = l.sum + r.sum;
+    tmp.opt = max({l.opt , r.opt , l.suffix + r.prefix});
+    tmp.prefix = max(l.prefix , l.sum + r.prefix);
+    tmp.suffix = max(r.suffix , r.sum + l.suffix);
+    return tmp;
+}
+void Construct_Tree(int low , int high , int pos , ll val , int idx)
+{
+    if (low == high)
+    {
+        SegTree[pos].sum = val;
+        SegTree[pos].opt = val;
+        SegTree[pos].prefix = val;
+        SegTree[pos].suffix = val;
+        return;
+    }
+    int mid = (low + high)/2;
+    if (idx<=mid) Construct_Tree(low , mid , 2*pos + 1 , val , idx);
+    else Construct_Tree(mid + 1 , high , 2*pos + 2 , val , idx);
+    SegTree[pos] = SegTree[2*pos + 1] + SegTree[2*pos + 2];
+}
+OwO max_query(int l , int r , int low , int high , int pos)
+{
+    if (high < l || low > r) return {0 , INT_MIN , INT_MIN , INT_MIN};
+    if (low >= l && high <= r) return SegTree[pos];
+    int mid = (low + high)/2;
+    return (max_query(l , r , low , mid , 2*pos + 1) +
+            max_query(l , r , mid + 1 , high , 2*pos + 2));
+
+}
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int N;
+    cin >> N;
+    ff(i , 0 , N - 1)
+    {
+        ll x;
+        cin >> x;
+        Construct_Tree(0 , N - 1 , 0 , x , i);
+    }
+    int M;
+    cin >> M;
+    while(M--)
+    {
+        int l , r;
+        cin >> l >> r;
+        cout << max_query(l - 1, r-1 , 0 , N - 1 , 0).opt << endl;
+    }
+    return 0;
+}
