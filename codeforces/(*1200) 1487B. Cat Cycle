@@ -1,0 +1,67 @@
+//https://codeforces.com/problemset/problem/1487/B
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ff(i , a, b) for (int i = a; i <= b; i++)
+#define REP(i , a , b) for (int i = a; i >= b; i--)
+ 
+typedef long long ll;
+const ll base = 311;
+const ll mod = 1e9 + 7;
+const ll oo = 1e7;
+ 
+/********************************************************************************************/
+/*******************************************************************************************/
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+ 
+    int t;
+    cin >> t;
+ 
+    while(t--)
+    {
+        ll n , k;
+        cin >> n >> k;
+ 
+        if (n%2 == 0)
+        {
+            if (k%n == 0) cout << n << endl;
+            else cout << k%n << endl;
+        }
+        else
+        {
+            k--;
+            ll number = k/n;
+            ll cycle = n/2;
+            ll x = k%n;
+            ll start = 1 + 2*(number%cycle);
+            ll mid = (start + n)/2;
+ 
+            if ((start+x) < mid)
+            {
+                cout << start + x << endl;
+            }
+            else if ((start+x) >= x)
+            {
+                if ((start+x+1) <= n) cout << start+x+1 << endl;
+                else
+                {
+                    ll value = start + x + 1 - n;
+                    ll value_A = n - x;
+                    if ((n-x) > value) cout << value << endl;
+                    else cout << value + 1 << endl;
+                }
+            }
+ 
+ 
+        }
+    }
+ 
+ 
+    return 0;
+}
+ 
