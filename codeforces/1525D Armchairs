@@ -1,0 +1,61 @@
+//https://codeforces.com/problemset/problem/1525/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i ,a , b) for(int i = a; i <= int(b); i++)
+#define REP(i,a , b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e4 + 5;
+int F[MAXN][MAXN];
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int N;
+    cin >> N;
+    vector<int> v(N) , pos;
+    int num = 0;
+    ff(i , 0 , N - 1)
+    {
+        cin >> v[i];
+        if (v[i] == 1) num++;
+        else pos.PB(i);
+    }
+    int j = 1;
+    deque<int> check;
+    ff(i , 0 , N - 1)
+    {
+        if (v[i] == 1)
+        {
+            if (j == 1)
+            {
+                ff(k , 0 , int(pos.size()) - 1) F[j][k] = abs(i - pos[k]);
+            }
+            else
+            {
+                ff(k , 0 , int(pos.size())- 1)
+                {
+                    if (F[j-1][k] == INT_MAX)
+                    {
+                        F[j][k] = INT_MAX;
+                        continue;
+                    }
+                    if (!check.empty()) F[j][k] = check.front() + abs(i - pos[k]);
+                    else F[j][k] = INT_MAX;
+                    while(!check.empty() && check.back() >= F[j-1][k]) check.pop_back();
+                    check.PB(F[j-1][k]);
+                }
+            }
+            j++;
+            check.clear();
+        }
+    }
+    int ans = INT_MAX;
+    ff(i , 0 ,int(pos.size()) - 1) ans = min(ans , F[num][i]);
+    cout << ans;
+    return 0;
+}
