@@ -1,0 +1,147 @@
+//https://codeforces.com/problemset/problem/1525/C
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a ,b) for(int i = a; i <= int(b); i++)
+#define REP(i ,a ,b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef pair<int , int> pi;
+typedef long long ll;
+const ll MAXN = 1e7 + 5;
+struct node
+{
+    int first;
+    char second;
+    int third;
+};
+node pos[MAXN];
+bool sortbysec(const node l , const node r)
+{
+    return (l.first < r.first);
+}
+ 
+void the_end(deque<pi> &D , vector<int> &F , int M)
+{
+    if (int(D.size()) == 1) return;
+    while(!D.empty())
+    {
+        pi x1 = D.back();D.pop_back();
+        pi x2 = D.back();D.pop_back();
+        int pos1 = M  , pos2 = x2.second + (M - x1.second);
+        int time = (pos1 + pos2)/2 - x2.second;
+        F[x1.first] = time;
+        F[x2.first] = time;
+        if (int(D.size()) == 1) return;
+    }
+    return;
+}
+ 
+void zero(deque<pi> &D , vector<int> &F)
+{
+    if (int(D.size()) == 1) return;
+    while(!D.empty())
+    {
+        pi x1 = D.front(); D.pop_front();
+        pi x2 = D.front(); D.pop_front();
+        int pos1 = 0 , pos2 = x2.second - x1.second;
+        int time = x2.second - (pos1 + pos2)/2;
+        F[x1.first] = time;
+        F[x2.first] = time;
+        if(int(D.size() == 1)) return;
+    }
+    return;
+}
+ 
+void homogenious(deque <pi> &R , deque<pi> &L , vector<int> &F , int M)
+{
+    if (L.empty() || R.empty()) return;
+    while(!L.empty() && !R.empty())
+    {
+        pi x1 = L.front() , x2 = R.back();
+        L.pop_front(); R.pop_back();
+        if ((M - x2.second) >= x1.second)
+        {
+            int pos2 = M, pos1 = (M - x2.second) - x1.second;
+            int time = pos2 - (pos1 + pos2)/2 + M - x2.second;
+            F[x1.first] = time;
+            F[x2.first] = time;
+        }
+        else
+        {
+            int pos1 = 0, pos2 = M - (x1.second - (M - x2.second));
+            int time = (pos1 + pos2)/2 + x1.second;
+            F[x1.first] = time;
+            F[x2.first] = time;
+        }
+    }
+    return;
+}
+ 
+void res(deque<pi> &Re , deque<pi> &Ro ,
+         deque<pi> &Le , deque<pi> &Lo, vector<int> &F , int M)
+{
+      the_end(Re , F , M);
+      the_end(Ro , F , M);
+      zero(Le , F);
+      zero(Lo , F);
+      homogenious(Re , Le , F , M);
+      homogenious(Ro , Lo , F , M);
+}
+ 
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    int T;
+    cin >> T;
+    while(T--)
+    {
+        int N , M;
+        cin >> N >> M;
+        vector<int> F(N);
+        ff(i , 0 , N - 1) F[i] = -1;
+        ff(i , 0 , N - 1) cin >> pos[i].first , pos[i].third = i;
+        ff(i , 0 , N - 1) cin >> pos[i].second;
+        sort(pos , pos + N , sortbysec);
+        deque<pi> Ro , Re , Lo , Le;
+        ff(i , 0 , N - 1)
+        {
+            if(pos[i].second == 'R') // --> M
+            {
+                if (pos[i].first%2 == 0) Re.PB(MP(pos[i].third , pos[i].first));
+                else Ro.PB(MP(pos[i].third , pos[i].first));
+            }
+            else if (pos[i].second == 'L') // 0 <--
+            {
+                if (pos[i].first%2 == 0)
+                {
+                    if(!Re.empty() )
+                    {
+                        int time = (Re.back().second + pos[i].first)/2 - Re.back().second;
+                        F[pos[i].third] = time;
+                        F[Re.back().first] = time;
+                        Re.pop_back();
+                    }
+                    else Le.PB(MP(pos[i].third , pos[i].first));
+                }
+                else
+                {
+                    if(!Ro.empty())
+                    {
+                        int time = (Ro.back().second + pos[i].first)/2 - Ro.back().second;
+                        F[pos[i].third] = time;
+                        F[Ro.back().first] = time;
+                        Ro.pop_back();
+                    }
+                    else Lo.PB(MP(pos[i].third , pos[i].first));
+                }
+            }
+        }
+        res(Re , Ro , Le , Lo , F , M);
+        ff(i , 0 , N - 1) cout << F[i] << " ";
+        cout << "\n";
+    }
+ 
+    return 0;
+}
