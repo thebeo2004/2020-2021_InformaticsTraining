@@ -1,0 +1,54 @@
+//https://codeforces.com/problemset/problem/1511/D
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i ,a , b) for(int i = a; i <= int(b); i++)
+#define REP(i,a , b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 55;
+char F[125];
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    ff(i , 1 , 124) F[i] = ' ';
+    cin.tie(0);
+    int N , K;
+    cin >> N >> K;
+    K--;
+    string s;
+    s+='a';
+    char x = 'a';
+    ff(i , 1 , N - 1)
+    {
+       if (s[i-1] == char('a' + K))
+       {
+           if (x != char('a' + K))
+           {
+               F[int(s[i-1])] = char(x + 1);
+               s+= char(x + 1);
+               x++;
+           }
+           else
+           {
+               s+='a'; x= 'a';
+               ff(i , 'a' , 'a' + K) F[i] = ' ';
+           }
+       }
+       else
+       {
+           if (F[int(s[i-1])] == ' ') s+='a' , F[int(s[i-1])] = 'a';
+           else
+           {
+               s+=char(F[int(s[i-1])] + 1);
+               F[int(s[i-1])] = s[i];
+           }
+       }
+    }
+    cout << s;
+
+    return 0;
+}
