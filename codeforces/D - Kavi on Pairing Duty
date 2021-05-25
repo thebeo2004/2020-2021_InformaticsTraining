@@ -1,0 +1,60 @@
+//https://codeforces.com/contest/1529/problem/D
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 3e6 + 7;
+const ll mod = 998244353;
+vector<int> minPrime(MAXN , 0) , factorPrime(MAXN);
+ll F[MAXN];
+
+void Construct_minPrime()
+{
+    for(ll i = 2; i <= MAXN - 3 ; i ++)
+    {
+        if (minPrime[i] == 0)
+        {
+            for(ll j = i*i ; j <= MAXN - 3; j+=i) minPrime[j] = i;
+            minPrime[i] = i;
+        }
+    }
+}
+
+void Construct_factorPrime()
+{
+    ff(i , 2 , MAXN - 3)
+    {
+        int val = i , s = 1;
+        while(val > 1)
+        {
+            int x = minPrime[val] , cnt = 0;
+            while(val%x == 0) val/=x , cnt++;
+            s*=(cnt+1);
+        }
+        factorPrime[i] = s;
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    Construct_minPrime();
+    Construct_factorPrime();
+    int N;
+    cin >> N;
+    F[2] = 1;
+    F[4] = 3;
+    ff(i , 6 , 2*N)
+    {
+        F[i] = (F[i-2] + (F[i-2] - factorPrime[(i-2)/2]) + factorPrime[i/2])%mod;
+        if (F[i] < 0) F[i] += mod;
+    }
+    cout << F[2*N];
+    return 0;
+}
