@@ -1,0 +1,40 @@
+//https://codeforces.com/problemset/problem/1529/B
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i ,a , b) for(int i = a; i <= int(b); i++)
+#define REP(i,a , b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 3e5 + 5;
+
+int main()
+{
+    //ios_base::sync_with_stdio(0);
+    //cin.tie(0);
+    int T;
+    cin >> T;
+    while(T--)
+    {
+        int N;
+        cin >> N;
+        vector<int> v(N);
+        ff(i , 0 , N - 1) cin >> v[i];
+        sort(v.begin() , v.end());
+        deque<pi> D;
+        int ans = 1;
+        ff(i , 1 , N - 1)
+        {
+            while(!D.empty() && D.back().second >= (v[i] - v[i-1])) D.pop_back();
+            if(D.empty()) D.PB(MP(0 , v[i] - v[i-1]));
+            else D.PB(MP(D.back().first + 1 , v[i] - v[i-1]));
+            while(!D.empty() && D.front().second < v[i]) D.pop_front();
+            if (!D.empty()) ans = max(ans , i - D.front().first + 1);
+
+        }
+        cout << ans << "\n";
+    }
+    return 0;
+}
