@@ -1,0 +1,46 @@
+//https://codeforces.com/problemset/problem/1527/C
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 3e6 + 7;
+
+
+int main()
+{
+    //ios_base::sync_with_stdio(0);
+    //cin.tie(0);
+    int T;
+    cin >> T;
+    while(T--)
+    {
+        int N;
+        cin >> N;
+        vector<ll> v(N + 1) , F(N + 1);
+        ff(i , 1 , N) cin >> v[i];
+        F[1] = 0;
+        map<ll , ll> check;
+        check.insert(pi(v[1] , 1));
+        ll ans = 0;
+        ff(i , 2 , N)
+        {
+            F[i] = F[i-1];
+            if (check.count(v[i]))
+            {
+                F[i] += check[v[i]];
+                check[v[i]]+=i;
+            }
+            else check.insert(pi(v[i] , i));
+            ans+=F[i];
+        }
+        cout << ans << "\n";
+
+    }
+
+    return 0;
+}
