@@ -1,0 +1,36 @@
+//https://codeforces.com/contest/1526/problem/A
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define PB push_back
+#define MP make_pair
+typedef pair<int , int> pi;
+typedef long long ll;
+const ll MAXN = 1e6 + 7;
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int t;
+    cin >> t;
+    while(t--)
+    {
+        int n;
+        cin >> n;
+        vector<int> v(2*n);
+        ff(i , 0 , 2*n - 1) cin >> v[i];
+        sort(v.begin() , v.end());
+        int l = 0 , r = 2*n - 1;
+        while(l < r)
+        {
+            cout << v[l] << " " << v[r] << " ";
+            l++;r--;
+        }
+        cout << endl;
+    }
+ 
+    return 0;
+}
