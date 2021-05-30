@@ -1,0 +1,40 @@
+//https://codeforces.com/edu/course/2/lesson/6/2/practice/contest/283932/problem/E
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 3e6 + 7;
+double c;
+
+bool f(double x)
+{
+    if (x*x + sqrt(x) >= c) return true;
+    else return false;
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> c;
+    cout << fixed << setprecision(10);
+    double l = 0 , r = 1e5;
+    ff(i , 1 , 1000)
+    {
+        double m = (l + r)/2;
+        if (m*m + sqrt(m) == c)
+        {
+            cout << m;
+            return 0;
+        }
+        if (f(m)) r = m;
+        else l = m;
+    }
+    cout << r;
+    return 0;
+}
