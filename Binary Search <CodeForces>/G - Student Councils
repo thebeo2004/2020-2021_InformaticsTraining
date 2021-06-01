@@ -1,0 +1,42 @@
+//https://codeforces.com/edu/course/2/lesson/6/2/practice/contest/283932/problem/G
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+vector<ll> v;
+
+bool f(ll m , int k)
+{
+     ll total = 0;
+     int len = v.size();
+     ff(i , 0 , len - 1) total += min(v[i] , m);
+     if (total >= (m*k)) return true;
+     else return false;
+}
+
+int  main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int k ,  n;
+    cin >> k >> n;
+    v.resize(n);
+    ff(i , 0 , n - 1) cin >> v[i];
+    ll l = 0 , r = 1e15;
+    ll ans;
+    while(r >= l)
+    {
+        ll m = (l + r)/2;
+        if (f(m , k)) ans = m ,l = m + 1;
+        else r = m - 1;
+    }
+    cout << ans;
+    return 0;
+}
