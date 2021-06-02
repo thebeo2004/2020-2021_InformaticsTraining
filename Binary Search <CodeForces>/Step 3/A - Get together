@@ -1,0 +1,59 @@
+//https://codeforces.com/edu/course/2/lesson/6/3/practice/contest/285083/problem/A
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<ll , ll> pi;
+const ll MAXN = 3e5 + 7;
+vector<pi> v;
+
+bool sortbysec(const pi &l , const pi &r)
+{
+    return l.first < r.first;
+}
+bool f(double t)
+{
+    int len = v.size();
+    float l_max = INT_MIN , r_min = INT_MAX;
+    ff(i , 0 , len - 1)
+    {
+        float l = v[i].first - v[i].second*t;
+        float r = v[i].first + v[i].second*t;
+        l_max = max(l_max , l);
+        r_min = min(r_min , r);
+    }
+    if (r_min >= l_max) return true;
+    else return false;
+}
+
+int  main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+
+    int n;
+    cin >> n;
+    v.resize(n);
+    ff(i , 0 , n - 1) cin >> v[i].first >> v[i].second; //first: address , second: speed
+    sort(v.begin() , v.end() , sortbysec);
+    if (v[0].first == v[n-1].first)
+    {
+        cout << 0;
+        return 0;
+    }
+    cout << fixed << setprecision(6);
+    double l = 0 , r = 1e10;
+    ff(i , 1 , 1000)
+    {
+        double m = (l + r)/2;
+        if (f(m)) r = m;
+        else l = m;
+    }
+    cout << r;
+    return 0;
+}
