@@ -1,0 +1,47 @@
+//https://codeforces.com/edu/course/2/lesson/6/3/practice/contest/285083/problem/C
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<ll , ll> pi;
+const ll MAXN = 3e5 + 7;
+vector<int> v;
+int len , k;
+bool f(int t)
+{
+    int l = 0 , cnt = 1;
+    ff(i , 1 , len - 1)
+    {
+        if (v[i] - v[l] >= t)
+        {
+            cnt++;
+            l = i;
+        }
+    }
+    if (cnt >= k) return true;
+    else return false;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    cin >> len >> k;
+    v.resize(len);
+    ff(i , 0 , len - 1) cin >> v[i];
+    int l = 0 , r = 1e9 + 7;
+    int ans;
+    while(l <= r)
+    {
+        int t = (l + r)/2;
+        if (f(t)) ans = t , l = t + 1;
+        else r = t - 1;
+    }
+    cout << ans;
+
+   return 0;
+}
