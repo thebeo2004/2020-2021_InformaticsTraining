@@ -1,0 +1,46 @@
+//https://oj.vnoi.info/problem/c11str2
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define PB push_back
+#define MP make_pair
+typedef unsigned long long ll;
+typedef pair<int , int> pi;
+const ll base = 311;
+const ll mod = 1e9 + 7;
+
+void z_function(string a, string b , int &id)
+{
+    a = b + '#' + a;
+    int len = a.size() , len_b = b.size();
+    vector<int> z(len , 0);
+    int l = 0 , r = 0;
+    ff(i , 1 , len - 1)
+    {
+        z[i] = max(0 , min(z[i - l] , r - i + 1));
+        while(i + z[i] < len && a[z[i]] == a[i + z[i]]) z[i]++;
+        l = i; r = i + z[i] - 1;
+        if (i > len_b && i + z[i] == len) id = min(id , i - len_b - 1);
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    freopen("X.inp" , "r" , stdin);
+    freopen("Y.out" , "w" , stdout);
+    string a , b;
+    cin >> a >> b;
+    int id = INT_MAX;
+    z_function(a , b ,id);
+    if (id == INT_MAX) cout << a + b;
+    else if (id == 0) cout << b;
+    else
+    {
+        ff(i , 0 , id - 1) cout << a[i];
+        cout << b;
+    }
+    return 0;
+}
