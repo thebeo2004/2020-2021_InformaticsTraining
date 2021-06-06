@@ -1,0 +1,56 @@
+//https://codeforces.com/edu/course/2/lesson/6/4/practice/contest/285069/problem/A
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+vector<float> v;
+bool f(float m , int d , int &id1 , int &id2)
+{
+    int len = v.size();
+    vector<float> F(len + 1);
+    deque<pair<int , float>> check;
+    F[0] = 0;
+    ff(i , 0 , len - 1) F[i+1] = F[i] + v[i] - m;
+    int r = d;
+    ff(i , r , len)
+    {
+        while(!check.empty() && check.back().second >= F[i - d]) check.pop_back();
+        check.PB(MP(i - d + 1, F[i-d]));
+        if (check.front().second <= F[i])
+        {
+            id2 = i;
+            id1 = check.front().first;
+            return true;
+        }
+    }
+    return false;
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int n , d;
+    cin >> n >> d;
+    v.resize(n);
+    ff(i , 0 , n - 1) cin >> v[i];
+    float l = 0 , r = 1e8;
+    int id1 , id2;
+    ff(i , 1 , 50)
+    {
+        //cout << l << " " << r << "\n";
+        float m = (l + r)/2;
+        if (f(m , d , id1 , id2)) l = m;
+        else r = m;
+    }
+    cout << id1 <<  " " << id2;
+ 
+    return 0;
+}
