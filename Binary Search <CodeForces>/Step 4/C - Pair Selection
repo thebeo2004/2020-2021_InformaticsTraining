@@ -1,0 +1,45 @@
+//https://codeforces.com/edu/course/2/lesson/6/4/practice/contest/285069/problem/C
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+vector<pair<float , float>> v;
+
+bool f(float m , int k)
+{
+    vector<float> num;
+    int len = v.size();
+    ff(i , 0 , len - 1) num.PB(v[i].first - m*v[i].second);
+    sort(num.begin() , num.end());
+    float sum = 0;
+    REP(i , len - 1 , len - k) sum+=num[i];
+    if (sum >= 0) return true;
+    else return false;
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    cout << fixed << setprecision(7);
+    int n , k;
+    cin >> n >> k;
+    v.resize(n);
+    ff(i , 0 , n - 1) cin >> v[i].first >> v[i].second;
+    float l = 0 , r = 1e8;
+    ff(i , 1 , 50)
+    {
+        float m = (l + r)/2;
+        if (f(m , k)) l = m;
+        else r = m;
+    }
+    cout << l;
+    return 0;
+}
