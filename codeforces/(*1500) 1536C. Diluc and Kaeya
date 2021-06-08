@@ -1,0 +1,44 @@
+//https://codeforces.com/problemset/problem/1536/C
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i ,a , b) for(int i = a; i <= int(b); i++)
+#define REP(i,a , b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    cout << fixed << setprecision(15);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--)
+    {
+        int n;
+        cin >> n;
+        string str;
+        cin >> str;
+        double d = 0 , k = 0;
+        map<double , int> check;
+        ff(i , 0 , n - 1)
+        {
+            if (str[i] == 'D') d++;
+            else k++;
+            if (d == 0 || k == 0) cout << i + 1 << " ";
+            else
+            {
+                if(check.count(d/k)) check[d/k]++ , cout << check[d/k] << " ";
+                else cout << 1 << " " , check.insert(pair<double , int>(d/k , 1));
+            }
+        }
+        cout << "\n";
+    }
+
+    return 0;
+}
