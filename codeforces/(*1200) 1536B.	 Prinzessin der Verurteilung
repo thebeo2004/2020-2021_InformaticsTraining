@@ -1,0 +1,65 @@
+//https://codeforces.com/problemset/problem/1536/B
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i ,a , b) for(int i = a; i <= int(b); i++)
+#define REP(i,a , b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+vector<string> one , two , three;
+void construct(string str)
+{
+    ff(i , 'a' , 'z')
+    {
+        string a = str + char(i);
+        int len = int(a.size());
+        if (len == 1) one.PB(a) , construct(a);
+        else if (len == 2) two.PB(a) , construct(a);
+        else three.PB(a);
+    }
+}
+bool z_function(string a , string b)
+{
+    b = a + '#' + b;
+    int len_a = a.size() , len_b = b.size();
+    vector<int> z(len_b , 0);
+    int l = 0 , r = 0;
+    ff(i , 1 , len_b - 1)
+    {
+        z[i] = max(0 , min(z[i-l] , r - i + 1));
+        while(i + z[i] < len_b && b[z[i]] == b[i + z[i]]) z[i]++;
+        if (z[i] == len_a) return false;
+        l = i; r = i + z[i] - 1;
+    }
+    return true;
+}
+string f(string str)
+{
+    int len_1 = one.size() , len_2 = two.size() , len_3 = three.size();
+    ff(i , 0 , len_1 - 1) if (z_function(one[i] , str)) return one[i];
+    ff(i , 0 , len_2 - 1) if (z_function(two[i] , str)) return two[i];
+    ff(i , 0 , len_3 - 1) if (z_function(three[i] , str)) return three[i];
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp", "r" , stdin);
+    //freopen("Y.out", "w" , stdout);
+    string a;
+    construct(a);
+    int t;
+    cin >> t;
+    while(t--)
+    {
+        int n;
+        cin >> n;
+        string str;
+        cin >> str;
+        cout << f(str) << "\n";
+    }
+ 
+    return 0;
+}
