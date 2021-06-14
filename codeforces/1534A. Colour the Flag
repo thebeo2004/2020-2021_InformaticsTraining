@@ -1,0 +1,98 @@
+//https://codeforces.com/contest/1534/problem/A
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+const ll INF = 1e9 + 7;
+const ll base = 1001;
+char arr[53][53];
+set<int> storage;
+
+bool enforcement(int x , int y , char c)
+{
+    char c1;
+    if (c == 'W') c1 = 'R';
+    else if (c == 'R') c1 = 'W';
+    if (arr[x][y+1] == c || arr[x][y-1] == c || arr[x+1][y] == c || arr[x-1][y] == c) return false;
+    arr[x][y+1] = c1;
+    arr[x][y-1] = c1;
+    arr[x+1][y] = c1;
+    arr[x-1][y] = c1;
+    return true;
+}
+void owo(int x , int y , int n , int m , vector<pi> &expand)
+{
+    if (!storage.count((x+1)*base + y) && x + 1 <= n) expand.PB(MP(x+1 , y)) , storage.insert((x+1)*base + y);
+    if (!storage.count((x-1)*base + y) && x - 1 >= 1) expand.PB(MP(x-1 , y)) , storage.insert((x-1)*base + y);
+    if (!storage.count(x*base + y + 1) && y + 1 <= m) expand.PB(MP(x, y + 1)) , storage.insert(x*base + y + 1);
+    if (!storage.count(x*base + y - 1) && y - 1 >= 1) expand.PB(MP(x, y - 1)) , storage.insert(x*base + y - 1);
+}
+void display(int n , int m)
+{
+    cout << "YES" << "\n";
+    ff(i , 1 , n)
+    {
+        ff(j , 1 , m) cout << arr[i][j];
+        cout << "\n";
+    }
+}
+void solve()
+{
+    int n , m;
+    cin >> n >> m;
+    ff(i , 0 , n + 1)
+    {
+        ff(j , 0 , m + 1) arr[i][j] = '.';
+    }
+    storage.clear();
+    int cnt = 0;
+    pi pos;
+    ff(i , 1 , n)
+    {
+        ff(j , 1 , m)
+        {
+            cin >> arr[i][j];
+            if (arr[i][j] != '.') cnt = 1 , pos.first = i , pos.second = j;
+        }
+    }
+    if (cnt == 0) pos.first = 1 , pos.second = 1 , arr[1][1] = 'W';
+    vector<pi> check;
+    check.PB(pos);
+    storage.insert(pos.first*base + pos.second);
+    while(int(storage.size()) < (n*m))
+    {
+        if (check.empty()) break;
+        vector<pi> expand;
+        ff(i , 0 , int(check.size()) - 1)
+        {
+            int x = check[i].first , y = check[i].second;
+            if (!enforcement(x , y , arr[x][y]))
+            {
+                cout << "NO" << "\n";
+                return;
+            }
+            owo(x , y , n , m , expand);
+        }
+        check.clear();
+        if (int(expand.size()) > 0) ff(i , 0 , int(expand.size()) - 1) check.PB(expand[i]);
+    }
+    display(n , m);
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--) solve();
+
+    return 0;
+}
