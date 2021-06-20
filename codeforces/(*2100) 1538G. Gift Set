@@ -1,0 +1,47 @@
+//https://codeforces.com/problemset/problem/1538/G
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i ,a , b) for(int i = a; i <= int(b); i++)
+#define REP(i,a , b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+const ll INF = 1e9 + 7;
+void solve()
+{
+    ll x ,y , a, b;
+    cin >> x >> y >> a >> b;
+    if (a == b)
+    {
+        cout << min(x , y)/a << "\n";
+        return;
+    }
+    if (x < y) swap(x , y); // -> x > y
+    if (a < b) swap(a , b); // -> a > b
+    ll val = (x-y)/(a-b);
+    if (x - val*a > 0 && y - val*b > 0)
+    {
+        x-=val*a; y-=val*b;
+        ll res = y/(a+b);
+        val+=2*res;
+        y-=res*(a+b);
+        x-=res*(a+b);
+        if (x >= a && y >= b) val++;
+        cout << val << "\n";
+    }
+    else cout << min(y/b , x/a) << "\n";
+ 
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--) solve();
+    return 0;
+}
