@@ -1,0 +1,47 @@
+//https://codeforces.com/problemset/problem/1539/C
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<ll , int> pi;
+const ll MAXN = 1e5 + 7;
+const ll INF = 1e9 + 7;
+int F[MAXN][200];
+void solve()
+{
+    ll n ,k , x;
+    cin >> n >> k >> x;
+    vector<ll> v(n);
+    ff(i , 0 , n - 1) cin >> v[i];
+    sort(v.begin() , v.end());
+    ll ans = 1;
+    priority_queue<ll> arr;
+    ff(i , 0 , n - 2)
+    {
+        if (v[i+1] - v[i] <= x) continue;
+        else
+        {
+            ll num = (v[i+1] - v[i])/x - 1;
+            if (v[i+1] - (v[i] + num*x) > x) num++;
+            if (k - num >= 0) k-=num , arr.push(num);
+            else
+            {
+                if (!arr.empty() && num < arr.top()) k = k + arr.top() - num , arr.pop() , arr.push(num);
+                ans++;
+            }
+        }
+    }
+    cout << ans;
+}
+signed main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
