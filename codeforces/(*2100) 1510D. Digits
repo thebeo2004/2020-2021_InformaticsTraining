@@ -1,0 +1,100 @@
+//https://codeforces.com/contest/1510/problem/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef long double ld;
+typedef pair<ll , ll> pi;
+const ll MAXN = 1e5 + 7;
+const ld INF = 1.9;
+struct owo
+{
+    ld value = -INF;
+    int id1 = -1 , id2 = -1 , modular = -1;
+};
+owo F[MAXN][13];
+void solve()
+{
+    int n , k;
+    cin >> n >> k;
+    vector<int> v(n);
+    ff(i , 0 ,n - 1) cin >> v[i];
+    F[0][v[0]%10].value = log10(ld(v[0]));
+    F[0][v[0]%10].id1 = 0;
+    F[0][v[0]%10].id2 = 0;
+    F[0][v[0]%10].modular = v[0]%10;
+    ff(i , 1 , n - 1)
+    {
+        ff(j , 0 , 9)
+        {
+            F[i][j].value = F[i-1][j].value;
+            F[i][j].id1 = F[i-1][j].id1;
+            F[i][j].id2 = F[i-1][j].id2;
+            F[i][j].modular = F[i-1][j].modular;
+        }
+        ff(j , 0 , 9)
+        {
+            if (F[i-1][j].value == -INF) continue;
+            int mod = j*v[i]%10;
+            ld val = F[i-1][j].value + log10(ld(v[i]));
+            if (val > F[i][mod].value)
+            {
+                 F[i][mod].value = val;
+                 F[i][mod].id1 = i;
+                 F[i][mod].id2 = F[i-1][j].id1;
+                 F[i][mod].modular = j;
+            }
+        }
+        if (log10(ld(v[i])) > F[i][v[i]%10].value)
+        {
+             F[i][v[i]%10].value = log10(ld(v[i]));
+             F[i][v[i]%10].id1 = i;
+             F[i][v[i]%10].id2 = i;
+             F[i][v[i]%10].modular = v[i]%10;
+        }
+    }
+    /*ff(i , 0 , n - 1)
+    {
+        cout << i << "\n";
+        for(int j = 2; j <= 8; j+=2) cout <<j << ":" << " " << F[i][j].value << " " << F[i][j].id1 << " " << F[i][j].id2 << " " << F[i][j].modular << "\n";
+    }*/
+    //ff(i , 0 , 9) cout << F[n-1][i].value << " ";
+    if (F[n-1][k].value == -INF) cout << -1;
+    //id1 : now
+    //id2 : previous
+    else
+    {
+        vector<int> vect;
+        if (F[n-1][k].id1 == F[n-1][k].id2) cout << 1 << "\n" << v[F[n-1][k].id1];
+        else
+        {
+ 
+            int mod = F[n-1][k].modular , pos = F[n-1][k].id2;
+            vect.PB(v[F[n-1][k].id1]);
+            vect.PB(v[F[n-1][k].id2]);
+            while(F[pos][mod].id1 != F[pos][mod].id2 && F[pos][mod].id1 != -1)
+            {
+                vect.PB(v[F[pos][mod].id2]);
+                int x = pos, y = mod;
+                mod = F[x][y].modular;
+                pos = F[x][y].id2;
+            }
+            cout << int(vect.size()) << "\n";
+            while(!vect.empty()) cout << vect.back() << " " , vect.pop_back();
+        }
+ 
+    }
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    cout << fixed << setprecision(33);
+    solve();
+    return 0;
+}
