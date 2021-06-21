@@ -1,0 +1,63 @@
+//https://codeforces.com/problemset/problem/1539/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<ll , ll> pi;
+const ll MAXN = 1e6 + 7;
+const ll INF = 1e9 + 7;
+bool sortbysec(const pi &l , const pi &r)
+{
+    return l.second < r.second;
+}
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<pi> v(n);
+    ff(i , 0 , n - 1) cin >> v[i].first >> v[i].second;
+    sort(v.begin() , v.end()  , sortbysec);
+    int l = 0 , r = n - 1;
+    ll ans = 0 , num = 0;
+    while(l <= r)
+    {
+        if (l == r)
+        {
+            if (v[l].first == 0) break;
+            if (num >= v[l].second ) ans+=v[l].first;
+            else
+            {
+                if (num + v[l].first <= v[l].second) ans+=2*v[l].first;
+                else ans+=2*(v[l].second - num) + (v[l].first - (v[l].second - num));
+            }
+            break;
+        }
+        if (num >= v[l].second) ans+=v[l].first , num+=v[l].first;
+        else if (num < v[l].second)
+        {
+            while(r > l && num + v[r].first <= v[l].second) ans+=2*v[r].first , num+=v[r].first , v[r].first = 0 , r--;
+            if (r > l && num < v[l].second) ans+=2*(v[l].second - num) , v[r].first-=(v[l].second - num) , num = v[l].second;
+            if (num >= v[l].second) ans+=v[l].first , num+=v[l].first;
+            else
+            {
+                if (num + v[l].first <= v[l].second) ans+=2*v[l].first;
+                else ans+=2*(v[l].second - num) + (v[l].first - (v[l].second - num));
+            }
+        }
+ 
+        l++;
+    }
+    cout << ans << " ";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
