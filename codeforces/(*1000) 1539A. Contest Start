@@ -1,0 +1,41 @@
+//https://codeforces.com/problemset/problem/1539/A
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define REP(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<ll , int> pi;
+const ll MAXN = 1e5 + 7;
+const ll INF = 1e9 + 7;
+void solve()
+{
+    ll n , x , t;
+    cin >> n >> x >> t;
+    if (t < x || n == 1) cout << 0 << "\n";
+    else
+    {
+        ll step = t/x;
+        if (n < step)
+        {
+            ll value = n - 1;
+            cout << n*(n-1)/2 << "\n";
+        }
+        else if (n >= step)
+        {
+            cout << (n-step)*step + (step-1)*step/2 << "\n";
+        }
+    }
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int k;
+    cin >> k;
+    while (k--) solve();
+    return 0;
+}
