@@ -1,0 +1,59 @@
+//https://codeforces.com/problemset/problem/1537/E2
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<ll , ll> pi;
+const ll MAXN = 1e5 + 7;
+const ll INF = 1e9 + 7;
+vector<int> z;
+void z_function(string str)
+{
+    int len = str.size() , l = 0 , r = 0;
+    z.resize(len);
+    z[0] = 0;
+    ff(i , 1 , len - 1)
+    {
+        z[i] = max(0 , min(z[i - l] , r - i + 1));
+        while(i + z[i] < len && str[z[i]] == str[i+z[i]]) l = i , r = i + z[i] , z[i]++;
+    }
+}
+void solve()
+{
+   int n , k;
+   cin >> n >> k;
+   string s;
+   cin >> s;
+   z_function(s);
+   string str;
+   str+=s[0];
+   ff(i , 1 , n - 1)
+   {
+       if (i + z[i] == n) break;
+       if (z[i] - 1 < i)
+       {
+           if (s[z[i]] > s[i + z[i]]) str+=s[i];
+           else if (s[z[i]] < s[i+z[i]]) break;
+       }
+       else if (z[i] - 1 >= i) str+=s[i];
+   }
+   int len = str.size() , num = k/len;
+   //cout << str;
+   ff(i , 1 , num) cout << str;
+   if (k % len > 0)
+   {
+       ff(i , 0 , k%len - 1) cout << str[i];
+   }
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
