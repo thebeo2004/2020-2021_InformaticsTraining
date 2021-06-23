@@ -1,0 +1,81 @@
+//https://codeforces.com/problemset/problem/1520/E
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<ll , ll> pi;
+const ll MAXN = 1e6 + 7;
+const ll INF = 1e15 + 7;
+bool test(string s)
+{
+    int len = s.size() , cnt = 0;
+    bool t = true;
+    ff(i , 0 , len - 1)
+    {
+        if(s[i] == '*' && !t) return false;
+        if (s[i] == '*') cnt++;
+        if (s[i] == '.' && cnt > 0) t = false;
+    }
+    return true;
+}
+void solve()
+{
+    int len;
+    cin >> len;
+    string s;
+    cin >> s;
+    if (test(s))
+    {
+        cout << 0 << "\n";
+        return;
+    }
+    vector<pi> vect_l(len) , vect_r(len);
+    ll cnt = 0 , pos = -1;
+    // first: the step of sheep
+    //second: the number of sheep from 0 to i
+    ff(i , 0 , len - 1)
+    {
+        if (s[i] == '*') cnt++;
+        else if (s[i] == '.')
+        {
+            if (pos == -1) vect_l[i].second = cnt , vect_l[i].first = 0;
+            else vect_l[i].second = cnt, vect_l[i].first = vect_l[pos].first + vect_l[pos].second;
+            pos = i;
+        }
+    }
+    cnt = 0; pos = -1;
+    Rep(i , len - 1 , 0)
+    {
+        if (s[i] == '*') cnt++;
+        else if (s[i] == '.')
+        {
+            if (pos == -1) vect_r[i].second = cnt , vect_r[i].first = 0;
+            else vect_r[i].second = cnt , vect_r[i].first = vect_r[pos].first + vect_r[pos].second;
+            pos = i;
+        }
+    }
+    ll best = INF;
+    ff(i , 0 , len - 1)
+    {
+        if (s[i] == '*') continue;
+        ll val;
+        if (vect_l[i].second == 0 || vect_r[i].second == 0) val = vect_l[i].first + vect_r[i].first + max(vect_l[i].second , vect_r[i].second);
+        else val = vect_l[i].first + vect_r[i].first + min(vect_l[i].second , vect_r[i].second);
+        best = min(best , val);
+    }
+    cout << best << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--) solve();
+    return 0;
+}
