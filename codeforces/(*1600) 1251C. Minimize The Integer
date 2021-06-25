@@ -1,0 +1,52 @@
+//https://codeforces.com/contest/1251/problem/C
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e6 + 7;
+const ll INF = 1e9 + 7;
+void solve()
+{
+    string str;
+    cin >> str;
+    vector<pair<int , bool>> digit;
+    vector<int> num;
+    int len = str.size();
+    ff(i , 0 , len - 1) digit.PB(MP(str[i] - 48 , true));
+    int l = 0 , r = 0;
+    while(l < len || r < len)
+    {
+        while(r < len && digit[l].first%2 == digit[r].first%2) r++;
+        if (r == len)
+        {
+            ff(i , l , len - 1) if (digit[i].second) num.PB(digit[i].first);
+            l = len;
+        }
+        else
+        {
+            if (digit[l].first > digit[r].first) num.PB(digit[r].first) , digit[r].second = false , r++;
+            else
+            {
+                 num.PB(digit[l].first); l++;
+                 while(!digit[l].second) l++;
+            }
+        }
+    }
+    ff(i , 0 , len - 1) cout << num[i];
+    cout << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--) solve();
+    return 0;
+}
