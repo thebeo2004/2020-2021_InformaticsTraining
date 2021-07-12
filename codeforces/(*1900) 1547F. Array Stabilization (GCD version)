@@ -1,0 +1,81 @@
+//https://codeforces.com/contest/1547/problem/F
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 7e5+ 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+int SegTree[MAXN];
+vector<int> vect;
+void Update(int id , int low , int high , int pos , int val)
+{
+    if (low == high)
+    {
+        SegTree[pos] = val;
+        return;
+    }
+    int mid = (low + high)/2;
+    if (id <= mid) Update(id , low, mid , 2*pos + 1 , val);
+    else Update(id , mid + 1 , high , 2*pos + 2 , val);
+    SegTree[pos] = __gcd(SegTree[2*pos + 1] , SegTree[2*pos + 2]);
+}
+int gcd_query(int l , int r , int low , int high , int pos)
+{
+    if (low > r || high < l) return 0;
+    if (low >= l && high <= r) return SegTree[pos];
+    int mid = (low + high)/2;
+    return __gcd(gcd_query(l , r , low , mid , 2*pos + 1) , gcd_query(l , r , mid + 1 , high , 2*pos + 2));
+}
+bool f(int m , int n)
+{
+    if (m == n - 1) return true;
+    int l = 0 , r = m , cnt = 1;
+    int val = gcd_query(l , r , 0 , n - 1 , 0);
+    l++;r++;
+    while(cnt <= n)
+    {
+        int x;
+        if (r > (n - 1)) x = __gcd(gcd_query(l , n - 1 , 0 ,n - 1 , 0) , gcd_query(0 , r - n , 0 , n - 1 , 0));
+        else x = gcd_query(l , r , 0 , n - 1 , 0);
+        l++;r++;
+        if (x != val) return false;
+        cnt++;
+    }
+    return true;
+}
+void solve()
+{
+    vect.clear();
+    int n;
+    cin >> n;
+    vect.resize(n);
+    ff(i , 0 , n - 1)
+    {
+        cin >> vect[i];
+        Update(i , 0 , n - 1 , 0 , vect[i]);
+    }
+    int l = 0 , r = n - 1;
+    int ans;
+    while(l <= r)
+    {
+        int m = (l + r)/2;
+        if (f(m , n)) ans = m , r = m - 1;
+        else l = m + 1;
+    }
+    cout << ans << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--) solve();
+    return 0;
+}
