@@ -1,0 +1,60 @@
+//https://codeforces.com/problemset/problem/1547/E
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 7e5+ 7;
+const ll INF = 1e15 + 7;
+const ll mod = 998244353;
+#define index first
+#define sum second
+int SegTree[MAXN];
+bool sortbysec(const pair<ll, ll> &X , const pair<ll , ll> &Y)
+{
+    return X.first < Y.first;
+}
+void solve()
+{
+    ll n , k;
+    cin >> n >> k;
+    vector<pair<ll , ll>> vect(k + 1);
+    //first: position
+    //second: temperature
+    ff(i , 1 , k) cin >> vect[i].first;  //ff(i , 1 , k) cin >> pos[i];
+    ff(i , 1 , k) cin >> vect[i].second; //ff(i , 1 , k) cin >> tmp[i];
+    sort(vect.begin() , vect.end() , sortbysec);
+    deque<pair<ll , ll>> D;
+    ff(i , 1 , k)
+    {
+        while(!D.empty() && D.back().sum > (vect[i].second + vect[i].first)) D.pop_back();
+        D.PB(MP(vect[i].first, vect[i].first + vect[i].second));
+    }
+    ll MIN = INF , id = 1;
+    ff(i , 1 , n)
+    {
+        while(!D.empty() && D.front().index < i) D.pop_front();
+        if (MIN == INF) cout << D.front().sum - i << " ";
+        else if (D.empty()) cout << MIN + i << " ";
+        else cout << min(D.front().sum - i , MIN + i) << " ";
+        if (i == vect[id].first)
+        {
+            MIN = min(MIN , vect[id].second - vect[id].first);
+            if (id < k) id++;
+        }
+    }
+    cout << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--) solve();
+    return 0;
+}
