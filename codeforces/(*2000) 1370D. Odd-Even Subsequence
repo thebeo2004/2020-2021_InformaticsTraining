@@ -1,0 +1,70 @@
+//https://codeforces.com/contest/1370/problem/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 1e7 + 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+vector<int> vect;
+bool odd_even(int check , int m , int k)
+{
+    int len = vect.size() , cnt = 0;
+    ff(i , 1 , len - 1)
+    {
+        if (check == 1) // odd
+        {
+            if (cnt%2 == 1) cnt++;
+            else if (cnt % 2 == 0)
+            {
+                if (vect[i] <= m) cnt++;
+                else continue;
+            }
+        }
+        else if (check == 0) // even
+        {
+            if (cnt % 2 == 0) cnt++;
+            else if (cnt % 2 == 1)
+            {
+                if (vect[i] <= m) cnt++;
+                else continue;
+            }
+        }
+    }
+    if (cnt >= k) return true;
+    else return false;
+}
+bool f(int m , int k)
+{
+   if (odd_even(0 , m ,k) || odd_even(1 , m , k)) return true;
+   else return false;
+}
+void solve()
+{
+    int n , k;
+    cin >> n >> k;
+    vect.resize(n + 1);
+    ff(i , 1  , n) cin >> vect[i];
+    int l = 1 , r = INF;
+    int ans;
+    while(r >= l)
+    {
+        //cout << l << " " << r << "\n";
+        int m = (l + r)/2;
+        if (f(m , k)) r = m - 1 , ans = m;
+        else l = m + 1;
+    }
+    cout << ans;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
