@@ -1,0 +1,64 @@
+//https://codeforces.com/problemset/problem/1366/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 1e7 + 7;
+const ll INF = 1e15 + 7;
+const ll mod = 998244353;
+vector<int> min_prime(MAXN , 0);
+void Eratothenes()
+{
+    ff(i , 2 , MAXN - 2)
+    {
+        if (min_prime[i] == 0)
+        {
+            for(ll j = ll(i)*i; j <= MAXN - 2; j+=i) if(min_prime[j] == 0) min_prime[j] = i;
+            min_prime[i] =i;
+        }
+    }
+}
+pair<int , int>  prime_analytics(int n)
+{
+    vector<int> prime;
+    while(n > 1)
+    {
+        int x = min_prime[n];
+        while(n % x == 0) n/=x;
+        prime.PB(x);
+    }
+    if (int(prime.size()) == 1) return {-1 , -1};
+    int x = prime[0] , y = 1;
+    ff(i , 1, int(prime.size()) - 1) y = y*prime[i];
+    return {x , y};
+}
+void solve()
+{
+    int N;
+    cin >> N;
+    vector<int> a , b;
+    ff(i , 1 , N)
+    {
+        int x;
+        cin >> x;
+        auto value = prime_analytics(x);
+        a.PB(value.first);
+        b.PB(value.second);
+    }
+    ff(i , 0 , N - 1) cout << a[i] << " ";
+    cout << "\n";
+    ff(i , 0 , N - 1) cout << b[i] << " ";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    Eratothenes();
+    solve();
+    return 0;
+}
