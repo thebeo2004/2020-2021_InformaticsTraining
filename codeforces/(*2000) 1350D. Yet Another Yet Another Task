@@ -1,0 +1,109 @@
+//https://codeforces.com/contest/1359/problem/D
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 3e5 + 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+vector<int> vect;
+vector<pair<int , int>> lim;
+#define left first
+#define right second
+struct owo
+{
+    int sum , suffix , prefix;
+};
+owo SegTree[MAXN];
+owo combinator(const owo &left_val , const owo &right_val)
+{
+    owo tmp;
+    tmp.sum = left_val.sum + right_val.sum;
+    tmp.prefix = max(left_val.prefix , left_val.sum + right_val.prefix);
+    tmp.suffix = max(right_val.suffix , right_val.sum + left_val.suffix);
+    return tmp;
+}
+void Update(int id , int low ,int high ,int pos , int val)
+{
+    if (low == high)
+    {
+        SegTree[pos].prefix = val;
+        SegTree[pos].suffix = val;
+        SegTree[pos].sum = val;
+        return;
+    }
+    int mid = (low + high)/2;
+    if (id <= mid) Update(id , low , mid, 2*pos + 1 , val);
+    else Update(id , mid + 1 , high , 2*pos + 2 , val);
+    SegTree[pos] = combinator(SegTree[2*pos + 1] , SegTree[2*pos + 2]);
+}
+owo sum_query(int l , int r , int low , int high , int pos)
+{
+    if (low > r || high < l) return {0 , -INF , -INF};
+    if (low >= l && high <= r) return SegTree[pos];
+    int mid = (low + high)/2;
+    return combinator(sum_query(l , r , low , mid , 2*pos + 1) ,
+                      sum_query(l , r , mid + 1 , high , 2*pos + 2));
+}
+void lim_left_right()
+{
+    deque<int> D;
+    int len = vect.size();
+    ff(i , 0 , len - 1)
+    {
+        while(!D.empty() && vect[D.back()] <= vect[i]) D.pop_back();
+        if (D.empty()) lim[i].left = 0;
+        else lim[i].left = D.back() + 1;
+        D.push_back(i);
+    }
+    D.clear();
+    Rep(i , len - 1 , 0)
+    {
+        while(!D.empty() && vect[D.back()] <= vect[i]) D.pop_back();
+        if (D.empty()) lim[i].right = len - 1;
+        else lim[i].right = D.back() - 1;
+        D.push_back(i);
+    }
+}
+void solve()
+{
+    int N;
+    cin >> N;
+    vect.resize(N);
+    lim.resize(N);
+    ff(i , 0 , N - 1)
+    {
+        cin >> vect[i];
+        Update(i , 0 , N - 1 , 0 , vect[i]);
+    }
+    lim_left_right();
+    int best = -INF;
+    ff(i , 0 , N - 1)
+    {
+        int l = lim[i].left , r = lim[i].right;
+        if (l == r) best = max(best , 0);
+        else
+        {
+            if (l == i) best = max(best , sum_query(i , r , 0 , N - 1 , 0).prefix - vect[i]);
+            else if (r ==i) best = max(best , sum_query(l , i , 0 , N - 1 , 0).suffix - vect[i]);
+            else
+            {
+                best = max({best , sum_query(l , i , 0 , N - 1 , 0).suffix + sum_query(i + 1 , r , 0 , N - 1 , 0).prefix - vect[i] ,
+                                   sum_query(l , i , 0 , N - 1 , 0).suffix - vect[i]});
+            }
+        }
+    }
+    cout << best;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
