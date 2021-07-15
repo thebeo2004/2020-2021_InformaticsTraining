@@ -1,0 +1,60 @@
+//https://codeforces.com/problemset/problem/1547/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 3e5 + 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+ll binary_analytics(ll a , ll b)
+{
+    vector<ll> digit_a , digit_b;
+    while(a > 0) digit_a.PB(a%2) , a/=2;
+    while(b > 0) digit_b.PB(b%2) , b/=2;
+    int len_a = digit_a.size() , len_b = digit_b.size();
+    ff(i , len_a , max(len_a , len_b)) digit_a.PB(0);
+    ff(i , len_b , max(len_a , len_b)) digit_b.PB(0);
+    vector<ll> num;
+    ff(i , 0 , max(len_a , len_b) - 1)
+    {
+        if (digit_a[i] == 1)
+        {
+            if (digit_b[i] == 1) num.PB(0);
+            else num.PB(1);
+        }
+        else num.PB(0);
+    }
+    ll res = 0;
+    ff(i , 0 , max(len_a , len_b) - 1) if(num[i] == 1) res+=pow(2 , i);
+    return res;
+}
+void solve()
+{
+    int N;
+    cin >> N;
+    vector<ll> vect(N + 1);
+    ff(i , 1 , N) cin >> vect[i];
+    vector<ll> res(N + 1);
+    res[1] = 0;
+    ff(i , 2 , N)
+    {
+        ll x = (vect[i - 1]^res[i-1]);
+        res[i] = binary_analytics(x , vect[i]);
+    }
+    ff(i , 1 , N) cout << res[i] << " ";
+    cout << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int t;
+    cin >> t;
+    while(t--) solve();
+    return 0;
+}
