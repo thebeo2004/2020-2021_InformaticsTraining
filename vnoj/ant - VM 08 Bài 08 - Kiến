@@ -1,0 +1,33 @@
+//https://oj.vnoi.info/problem/ant
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 1e4 + 7;
+const ll INF = 1e9 + 7;
+const ll base = 311;
+ll josephus(ll n , ll k)
+{
+    ll res = n*k;
+    while(res > n) res+= (res - 1 - n)/(k-1) - n;
+    return res;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    //solve();
+    //z_function("ACBACDACBACBACDA");
+    //Eratothenes();
+    //Eratothenes_range(10 , 100);
+    ll n , k;
+    cin >> n >> k;
+    cout << josephus(n , k);
+
+    return 0;
+}
