@@ -1,0 +1,45 @@
+//https://codeforces.com/problemset/problem/1244/C
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 3e5 + 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+void solve()
+{
+    ll n , p  , d, w;
+    cin >> n >> p >> w >> d;
+    if (n == 0 && p > 0)
+    {
+        cout << -1;
+        return;
+    }
+    if (p == 0)
+    {
+        cout << 0 << " " << 0 << " " << n;
+        return;
+    }
+    ff(i , 0 ,w - 1)
+    {
+        ll val = p - i*d;
+        if (val >= 0 && val%w == 0 && (i + val/w) <= n)
+        {
+            cout << val/w << " " << i << " " << n - i - val/w;
+            return;
+        }
+    }
+    cout << -1;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
