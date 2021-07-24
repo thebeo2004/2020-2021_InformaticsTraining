@@ -1,0 +1,89 @@
+//https://codeforces.com/contest/1516/problem/D
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 1e5 + 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+vector<int> min_prime(MAXN , 0) , F(MAXN , 0);
+void Eratothenes()
+{
+    ff(i , 2 , MAXN - 2)
+    {
+        if (min_prime[i] == 0)
+        {
+            for(ll j = ll(i)*i; j <= MAXN - 2; j+=i) if (min_prime[j] == 0) min_prime[j] = i;
+            min_prime[i] = i;
+        }
+    }
+}
+void prime_analytics(int n , int &cnt , int flag)
+{
+    if (n == 1) return;
+    while(n > 1)
+    {
+        int x = min_prime[n];
+        while(n%x == 0) n/=x;
+        if (flag == 1)
+        {
+            F[x]++;
+            if (F[x] == 2) cnt++;
+        }
+        else
+        {
+            if (F[x] == 2) cnt--;
+            F[x]--;
+        }
+    }
+}
+int dp[21][MAXN - 2];
+void solve()
+{
+    int n , T;
+    cin >> n >> T;
+    vector<int> vect(n + 1) , lim(n + 2);
+    ff(i , 1 , n) cin >> vect[i];
+    int cnt = 0 , r = n;
+    Rep(i , n , 1)
+    {
+        prime_analytics(vect[i] , cnt , 1);
+        if (cnt == 0)  lim[i] = r;
+        else
+        {
+            while(cnt > 0) prime_analytics(vect[r] , cnt , 2) , r--;
+            lim[i] = r;
+        }
+    }
+    ff(i , 1 , n) dp[0][i] = lim[i] + 1;
+    dp[0][n + 1] = n + 1;
+    ff(i , 1 , 19)
+    {
+        ff(j , 1 , n + 1) dp[i][j] = dp[i-1][dp[i-1][j]];
+    }
+    while(T--)
+    {
+        int l , r;
+        cin >> l >> r;
+        int ans = 0;
+        Rep(i , 19 , 0)
+        {
+             if (dp[i][l] <= r) ans+=pow(2 , i) , l = dp[i][l];
+        }
+        cout << ans + 1 << "\n";
+    }
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    Eratothenes();
+    solve();
+
+    return 0;
+}
