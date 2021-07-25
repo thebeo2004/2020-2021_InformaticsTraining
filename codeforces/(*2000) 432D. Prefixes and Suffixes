@@ -1,0 +1,60 @@
+//https://codeforces.com/problemset/problem/432/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 1e5 + 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+const ll base = 311;
+vector<int> z;
+void z_function(string txt)
+{
+    int len = txt.size() , l = 0 , r = 0;
+    ff(i , 1 , len - 1)
+    {
+        z[i] = max(0 , min(z[i-l], r - i + 1));
+        while(i + z[i] < len && txt[z[i]] == txt[i + z[i]]) l = i , r = i + z[i] , z[i]++;
+    }
+    z[0] = len;
+    sort(z.begin() , z.end());
+}
+void solve()
+{
+    string str;
+    cin >> str;
+    int len = str.size();
+    z.resize(len);
+    z_function(str);
+    ll hash_l = 0 , hash_r = 0 , val = 1;
+    int l = 0 , r = len - 1;
+    vector<pair<int , int>> ans;
+    while(r >= 0)
+    {
+        hash_l = (hash_l*base + int(str[l]))%INF;
+        hash_r = (hash_r + val*int(str[r]))%INF;
+        if (hash_l == hash_r)
+        {
+            ll x = l + 1;
+            int id = lower_bound(z.begin() , z.end() , x) - z.begin();
+            ans.PB(MP(x , (len - 1) - id + 1));
+        }
+        val = val*base%INF;
+        l++;r--;
+    }
+    cout << int(ans.size()) << "\n";
+    ff(i , 0 , int(ans.size()) - 1) cout << ans[i].first << " " << ans[i].second << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+ 
+    return 0;
+}
