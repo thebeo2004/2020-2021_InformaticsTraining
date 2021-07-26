@@ -1,0 +1,38 @@
+//https://codeforces.com/problemset/problem/1156/C
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 4e5 + 7;
+const ll INF = 1e9 + 7;
+const ll mod = 998244353;
+const ll base = 2;
+
+void solve()
+{
+    ll n , z;
+    cin >> n >> z;
+    vector<ll> vect(n);
+    ff(i , 0 , n - 1) cin >> vect[i];
+    sort(vect.begin() , vect.end());
+    int mid = (n-2)/2 , cur = n - 1;
+    int cnt = 0;
+    for(mid; mid >= 0; mid--)
+    {
+        if(vect[cur] - vect[mid] >= z) cnt++ , cur--;
+    }
+    cout << cnt;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+
+    return 0;
+}
