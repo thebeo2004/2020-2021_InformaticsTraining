@@ -1,0 +1,68 @@
+//https://oj.vnoi.info/problem/fc126_kperm
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define PB push_back
+#define MP make_pair
+typedef long long ll;
+typedef pair<int , int> pi;
+const ll MAXN = 1e3 + 7;
+const ll INF = 1e9 + 7;
+const ll base = 1811;
+#define id first
+#define val second
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<pair<int ,int>> cnt(MAXN);
+    ff(i , 0 , MAXN - 2) cnt[i].id = 0;
+    ff(i , 1 , n)
+    {
+        int x;
+        cin >> x;
+        if (cnt[x].id == 0)
+        {
+            cnt[x].id = i;
+            cnt[x].val = i;
+        }
+        else
+        {
+            cnt[x].val = max(cnt[x].val , i - cnt[x].id);
+            cnt[x].id = i;
+        }
+    }
+    ff(i , 0 , MAXN - 1) if (cnt[i].id != 0) cnt[i].val = max(cnt[i].val , n - cnt[i].id + 1);
+    //ff(i , 1 , 5) cout << i << " " << cnt[i].val << "\n";
+    vector<int> F(n + 1, INF);
+    ff(i , 0 , MAXN - 1)
+    {
+        if (cnt[i].id != 0)
+        {
+            int value = cnt[i].val;
+            F[value] = min(F[value] , i);
+        }
+    }
+    ff(i , 1 , n)
+    {
+        if (F[i] == INF && F[i-1] == INF) cout << -1 << " ";
+        else
+        {
+            F[i] = min(F[i] , F[i-1]);
+            cout << F[i] << " ";
+        }
+    }
+    cout << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int T;
+    cin >> T;
+    while(T--) solve();
+    return 0;
+}
