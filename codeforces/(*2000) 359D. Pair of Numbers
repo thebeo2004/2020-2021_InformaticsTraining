@@ -1,0 +1,74 @@
+//https://codeforces.com/problemset/problem/359/D
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll INF = 1e9 + 7;
+const ll MAXN = 2e5 + 7;
+vector<pair<int , int>> lim;
+vector<int> vect;
+#define left first
+#define right second
+void find_lim_left(int n)
+{
+    deque<int> check;
+    ff(i , 1 , n)
+    {
+        while(!check.empty() && vect[check.back()] % vect[i] == 0) check.pop_back();
+        if (check.empty()) lim[i].left = 1;
+        else lim[i].left = check.back() + 1;
+        check.PB(i);
+    }
+}
+void find_lim_right(int n)
+{
+    deque<int> check;
+    Rep(i , n , 1)
+    {
+        while(!check.empty() && vect[check.back()] % vect[i] == 0) check.pop_back();
+        if (check.empty()) lim[i].right = n;
+        else lim[i].right = check.back() - 1;
+        check.PB(i);
+    }
+}
+void solve()
+{
+    int n;
+    cin >> n;
+    vect.resize(n + 1);
+    lim.resize(n + 1);
+    ff(i ,1 , n) cin >> vect[i];
+    find_lim_left(n);
+    find_lim_right(n);
+    int best = 0;
+    vector<int> pos;
+    ff(i , 1 , n)
+    {
+        int num = lim[i].right - lim[i].left;
+        if (best == num)
+        {
+            if (!pos.empty() && lim[i].left == pos.back()) continue;
+            pos.PB(lim[i].left);
+        }
+        else if (num > best)
+        {
+            best = num;
+            pos.clear();
+            pos.PB(lim[i].left);
+        }
+    }
+    cout << int(pos.size()) << " " << best << "\n";
+    ff(i , 0 ,int(pos.size()) - 1) cout << pos[i] << " ";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
