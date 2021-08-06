@@ -1,0 +1,62 @@
+//https://codeforces.com/problemset/problem/1555/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll INF = 1e9 + 7;
+const ll MAXN = 2e5 + 7;
+vector<int> abc(MAXN , 0) , acb(MAXN , 0) , bac(MAXN , 0) , bca(MAXN , 0) , cab(MAXN , 0) , cba(MAXN , 0);
+void construct(string pat , string txt , vector<int> &vect)
+{
+    vect[0] = 0;
+    int len = pat.size();
+    ff(i , 1 , len - 1)
+    {
+        vect[i] = vect[i-1];
+        int mod = i%3;
+        if (mod == 0) mod = 3;
+ 
+        if (pat[i] != txt[mod]) vect[i]++;
+    }
+    //cout << txt << " " << vect[len - 1] << "\n";
+}
+void solve()
+{
+    int n , m;
+    cin >> n >> m;
+    string str;
+    cin >> str;
+    str = "#" + str;
+    construct(str , "#abc" , abc);
+    construct(str , "#acb" , acb);
+    construct(str , "#bac" , bac);
+    construct(str , "#bca" , bca);
+    construct(str , "#cab" , cab);
+    construct(str , "#cba" , cba);
+    while(m--)
+    {
+        int l , r;
+        cin >> l >> r;
+        if (l == r ) cout << 0 << "\n";
+        else
+        {
+            cout << min({abc[r] - abc[l - 1] , acb[r] - acb[l - 1] ,
+                     bac[r] - bac[l - 1] , bca[r] - bca[l - 1] ,
+                     cab[r] - cab[l - 1] , cba[r] - cba[l - 1]
+                    }) << "\n";
+        }
+    }
+ 
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
