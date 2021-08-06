@@ -1,0 +1,123 @@
+//https://codeforces.com/contest/1555/problem/D
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll INF = 1e9 + 7;
+const ll MAXN = 1e6 + 7;
+vector<int> min_prime(MAXN , 0) , division(MAXN , 0);
+/// construct vector : division
+//{
+    void Eratothenes()
+    {
+        ff(i , 2 , MAXN - 2)
+        {
+            if (min_prime[i] == 0)
+            {
+                min_prime[i] = i;
+                for(ll j = ll(i)*i; j <= MAXN - 2; j+=i) if(min_prime[j] == 0) min_prime[j] = i;
+            }
+        }
+    }
+    int prime_analytics(int n)
+    {
+        int s = 1;
+        while(n > 1)
+        {
+            int x = min_prime[n] , cnt = 0;
+            while(n % x == 0) n/=x , cnt++;
+            s = s*(cnt + 1);
+        }
+        return s;
+    }
+    void divisible()
+    {
+        Eratothenes();
+        ff(i , 2 , MAXN - 2) division[i] = prime_analytics(i);
+    }
+//}
+/// construct the Segment Tree for 2 purpose: find max value and sum of segment
+//{
+    pair<ll , ll> SegTree[3*MAXN];
+    #define sum first
+    #define MAX second
+    pair<ll ,ll> combinator(pair<ll ,ll> l , pair<ll , ll> r)
+    {
+        return {l.sum + r.sum , max(l.MAX , r.MAX)};
+    }
+    void Update1(int id , int low , int high ,int pos , ll val)
+    {
+        if (low == high)
+        {
+            SegTree[pos].sum = val;
+            SegTree[pos].MAX = val;
+            return;
+        }
+        int mid = (low + high)/2;
+        if (id <= mid) Update1(id , low , mid , 2*pos + 1 , val);
+        else Update1(id , mid + 1 , high , 2*pos + 2 , val);
+        SegTree[pos] = combinator(SegTree[2*pos + 1] , SegTree[2*pos + 2]);
+    }
+    void Update2(int l ,int r, int low , int high ,int pos)
+    {
+        if (low > r || high < l) return;
+        if (SegTree[pos].MAX == 2 || SegTree[pos].MAX == 1) return;
+        if (low == high && l <= low && low <= r)
+        {
+            ll val = division[SegTree[pos].sum];
+            SegTree[pos].sum = val;
+            SegTree[pos].MAX = val;
+            return;
+        }
+        int mid = (low + high)/2;
+        Update2(l , r , low , mid , 2*pos + 1);
+        Update2(l , r , mid + 1 , high , 2*pos + 2);
+        SegTree[pos] = combinator(SegTree[2*pos + 1], SegTree[2*pos + 2]);
+    }
+    pair<ll , ll> Query(int l , int r ,int low , int high , int pos)
+    {
+        if (low > r || high < l) return {0 , 0};
+        if (low >= l && high <= r) return SegTree[pos];
+        int mid = (low + high)/2;
+        return combinator(Query(l, r , low , mid, 2*pos + 1) ,
+                          Query(l, r , mid + 1 , high , 2*pos + 2));
+    }
+//}
+void solve()
+{
+    int n, m;
+    cin >> n >> m;
+    vector<ll> vect(n);
+    ff(i ,0 , n - 1)
+    {
+        cin >> vect[i];
+        Update1(i , 0 , n - 1 , 0 ,vect[i]);
+    }
+    while(m--)
+    {
+        int flag ,l ,r;
+        cin >> flag >> l >> r;
+        l--;r--;
+        if (flag == 1)
+        {
+            ll val = Query(l , r , 0 , n - 1 , 0).MAX;
+            if (val == 2 || val == 1) continue;
+            else Update2(l , r , 0 , n - 1 , 0);
+        }
+        else cout << Query(l , r , 0 , n - 1 , 0).sum << "\n";
+    }
+    //ff(i , 0 , n - 1) cout << Query(i , i , 0 , n - 1 , 0).sum << " ";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    divisible();
+    solve();
+    return 0;
+}
