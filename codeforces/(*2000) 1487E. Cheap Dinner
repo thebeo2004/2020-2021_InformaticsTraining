@@ -1,0 +1,73 @@
+//https://codeforces.com/problemset/problem/1487/E
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll INF = 1e9 + 7;
+const ll MAXN = 1e6 + 7;
+const ll base = 311;
+#define index first
+#define value second
+bool sortbysec(const pair<ll ,ll> &l , const pair<ll , ll> &r)
+{
+    return (l.value < r.value);
+}
+void Update(vector<pair<ll , ll>> &res , vector<ll> cur)
+{
+    set<ll> check;
+    int m;
+    cin >> m;
+    while(m--)
+    {
+        ll x , y;
+        cin >> x >> y;
+        x--;y--;
+        check.insert(x*MAXN + y);
+    }
+    sort(res.begin() , res.end() , sortbysec);
+    vector<pair<ll , ll>> vect;
+    ff(i , 0 , int(cur.size()) - 1)
+    {
+        ff(j , 0 , int(res.size()) - 1)
+        {
+            if (!check.count(res[j].index*MAXN + i))
+            {
+                vect.PB(MP(i , cur[i] + res[j].value));
+                break;
+            }
+        }
+    }
+    res.clear();
+    ff(i , 0 , int(vect.size()) - 1) res.PB(vect[i]);
+}
+void solve()
+{
+    int n1 , n2 , n3 , n4;
+    cin >> n1 >> n2 >> n3 >> n4;
+    vector<ll> a(n1) , b(n2) , c(n3) , d(n4);
+    ff(i , 0 , n1 - 1) cin >> a[i]; // the first courses
+    ff(i , 0 , n2 - 1) cin >> b[i]; // the second courses
+    ff(i , 0 , n3 - 1) cin >> c[i]; // the drinks
+    ff(i , 0 , n4 - 1) cin >> d[i]; // the deserts
+    vector<pair<ll , ll>> res;
+    ff(i , 0 , n1 - 1) res.PB(MP(i , a[i]));
+    Update(res , b);
+    Update(res , c);
+    Update(res , d);
+    ll best = INF;
+    ff(i , 0 , int(res.size()) - 1) best = min(best , res[i].value);
+    if (best != INF) cout << best;
+    else cout << -1;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
