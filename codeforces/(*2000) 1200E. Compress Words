@@ -1,0 +1,50 @@
+//https://codeforces.com/contest/1200/problem/E
+#include <bits/stdc++.h>
+ 
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll INF = 1e9 + 7;
+const ll MAXN = 1e6 + 7;
+const ll base = 311;
+void compress_word(string &pat , string txt)
+{
+    int len_pat = pat.size() , len_txt = txt.size();
+    int id1 = len_pat - 1 , id2 = 0 ,  pos = 0;
+    ll hash_pat = 0 , hash_txt = 0 , val = 1;
+    while(id1 >= 0 && id2 < len_txt)
+    {
+        hash_pat = (hash_pat + pat[id1]*val)%INF;
+        hash_txt = (hash_txt*base + txt[id2])%INF;
+        if (hash_pat == hash_txt) pos = id2 + 1;
+        val = val*base%INF;
+        id1--;id2++;
+    }
+    ff(i , pos , len_txt - 1) pat += txt[i];
+    //cout << pat;
+}
+void solve()
+{
+    int n;
+    cin >> n;
+    string res;
+    cin >> res;
+    ff(i , 2 , n)
+    {
+        string str;
+        cin >> str;
+        compress_word(res , str);
+    }
+    cout << res;
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    solve();
+    return 0;
+}
