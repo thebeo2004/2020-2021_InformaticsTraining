@@ -1,0 +1,86 @@
+//https://codeforces.com/problemset/problem/1493/C
+#include <bits/stdc++.h>
+
+using namespace std;
+#define ff(i , a, b) for(int i = a; i <= int(b); i++)
+#define Rep(i, a, b) for(int i = a; i >= int(b); i--)
+#define MP make_pair
+#define PB push_back
+typedef long long ll;
+const ll MAXN = 125;
+const ll INF = 1e9 + 7;
+int modular(int n , int mod)
+{
+    if (n % mod == 0) return 0;
+    else return mod - n%mod;
+}
+bool check(vector<int> F , int mod)
+{
+    ff(i , 'a' , 'z') if (F[i] % mod != 0) return false; 
+    return true;
+}
+void solve()
+{
+    int n , k;
+    cin >> n >> k;
+    string str;
+    cin >> str;
+    if (n % k != 0)
+    {
+        cout << -1 << "\n";
+        return;
+    }
+    else if (k == 1)
+    {
+        cout << str << "\n";
+        return;
+    }
+    else
+    {
+        vector<int> F(MAXN , 0);
+        ff(i , 0 , n - 1) F[int(str[i])]++;
+        if (check(F , k))
+        {
+            cout << str << "\n";
+            return;
+        }
+        Rep(i , n - 1 , 0)
+        {
+            F[int(str[i])]--;
+            int cnt = 0;
+            // the minimum element needs to be satisfy the condition of assignment
+            ff(j , 'a' , 'z') cnt+= modular(F[j] , k);
+            //cout << cnt << "\n";
+            ff(j , str[i] + 1, 'z')
+            {
+                int val = cnt - modular(F[j] , k) + modular(F[j] + 1, k);
+                if (val <= (n - i - 1) && (n - i - val - 1)%k == 0)
+                {
+                    ff(z , 0 , i - 1) cout << str[z];
+                    cout << char(j);
+                    F[j]++;
+                    ff(z , 1 , n - i - val - 1) cout << 'a';
+                    ff(z , 'a' , 'z')
+                    {
+                        int num = modular(F[z] , k);
+                        ff(t , 1 , num) cout << char(z);
+                    }
+                    cout << "\n";
+                    return;
+                }
+            }
+        }
+    }
+    cout << -1 << "\n";
+}
+int main()
+{
+    ios_base::sync_with_stdio(0);cin.tie(0);
+    //freopen("X.inp" , "r" , stdin);
+    //freopen("Y.out" , "w" , stdout);
+    int T;
+    cin >> T;
+    while(T--) solve();
+
+    return 0;
+}
